@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0d0f" />
+  <title>VOIDCRAFT — закрытый Minecraft сервер</title>
+  <style>
+    :root{
+      --bg:#07090a;
+      --panel:#0e1214;
+      --panel-2:#12181b;
+      --text:#f3f7f6;
+      --muted:#96a5a0;
+      --line:rgba(255,255,255,.08);
+      --accent:#79ff5b;
+      --accent-2:#c2ffb7;
+      --danger:#ff5d67;
+      --shadow:0 20px 70px rgba(0,0,0,.42);
+      --radius:24px;
+      --max:1180px;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(121,255,91,.10), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(75,181,255,.08), transparent 22%),
+        linear-gradient(180deg,#060809 0%,#090c0e 52%,#060809 100%);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none; opacity:.35;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size:42px 42px;
+      mask-image:linear-gradient(to bottom, black, transparent 75%);
+    }
+
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    .container{width:min(var(--max),calc(100% - 36px));margin:auto}
+
+    .nav{
+      position:sticky;top:0;z-index:50;
+      backdrop-filter:blur(18px);
+      background:rgba(7,9,10,.68);
+      border-bottom:1px solid var(--line);
+    }
+    .nav-inner{
+      height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px;
+    }
+    .brand{display:flex;align-items:center;gap:11px;font-weight:900;letter-spacing:.08em}
+    .brand-mark{
+      width:34px;height:34px;border-radius:10px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--accent),#36b92c);
+      color:#091108;font-weight:1000;
+      box-shadow:0 0 35px rgba(121,255,91,.22);
+    }
+    .brand span{font-size:14px}
+    .nav-links{display:flex;gap:24px;color:var(--muted);font-size:14px}
+    .nav-links a{transition:.2s}
+    .nav-links a:hover{color:var(--text)}
+    .nav-actions{display:flex;align-items:center;gap:10px}
+
+    .btn{
+      border:1px solid var(--line);
+      background:#101517;
+      color:var(--text);
+      padding:11px 16px;border-radius:13px;
+      cursor:pointer;font-weight:800;font-size:14px;
+      transition:transform .18s, border-color .18s, background .18s, box-shadow .18s;
+    }
+    .btn:hover{transform:translateY(-2px);border-color:rgba(121,255,91,.45)}
+    .btn-primary{
+      border-color:rgba(121,255,91,.42);
+      color:#071006;
+      background:linear-gradient(135deg,var(--accent),#9cff84);
+      box-shadow:0 10px 30px rgba(121,255,91,.16);
+    }
+    .btn-primary:hover{box-shadow:0 14px 35px rgba(121,255,91,.22)}
+
+    .hero{padding:78px 0 42px}
+    .hero-grid{
+      display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:stretch;
+    }
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:9px;
+      padding:8px 11px;border-radius:999px;
+      border:1px solid rgba(121,255,91,.18);
+      background:rgba(121,255,91,.055);
+      color:var(--accent-2);font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;
+    }
+    .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px var(--accent)}
+    h1{
+      margin-top:20px;
+      font-size:clamp(48px,7vw,88px);
+      line-height:.94;
+      max-width:780px;
+      letter-spacing:-.055em;
+    }
+    .gradient{background:linear-gradient(105deg,#fff 10%,#b8ffac 58%,#79ff5b);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .hero p{margin-top:22px;color:var(--muted);font-size:17px;line-height:1.65;max-width:660px}
+    .hero-cta{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
+
+    .hero-card{
+      position:relative;overflow:hidden;
+      padding:26px;border:1px solid var(--line);border-radius:var(--radius);
+      background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.018));
+      box-shadow:var(--shadow);
+    }
+    .hero-card::after{
+      content:"";position:absolute;width:200px;height:200px;right:-70px;top:-70px;
+      border-radius:50%;background:rgba(121,255,91,.13);filter:blur(8px)
+    }
+    .status-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .status{
+      display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-weight:900;font-size:13px;
+    }
+    .hero-card h3{margin-top:24px;font-size:24px}
+    .hero-card p{font-size:14px;margin-top:8px}
+    .ip-box{
+      margin-top:22px;padding:13px 14px;border-radius:15px;border:1px solid var(--line);
+      background:#090d0f;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .ip{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px}
+    .copy{
+      width:39px;height:39px;border-radius:11px;border:1px solid var(--line);
+      background:#111719;color:var(--text);cursor:pointer
+    }
+    .copy:hover{border-color:rgba(121,255,91,.38)}
+
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+    .stat{padding:14px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid var(--line)}
+    .stat b{display:block;font-size:20px}.stat span{color:var(--muted);font-size:12px}
+
+    section{padding:64px 0}
+    .section-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:24px}
+    .section-head h2{font-size:34px;letter-spacing:-.035em}
+    .section-head p{color:var(--muted);max-width:500px;line-height:1.5;font-size:14px}
+
+    .passes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .pass{
+      position:relative;overflow:hidden;
+      border:1px solid var(--line);background:linear-gradient(180deg,#101517,#0b1012);
+      padding:22px;border-radius:22px;transition:.22s;
+    }
+    .pass:hover{transform:translateY(-6px);border-color:rgba(121,255,91,.3);box-shadow:0 20px 50px rgba(0,0,0,.25)}
+    .pass.popular{border-color:rgba(121,255,91,.45);box-shadow:0 0 0 1px rgba(121,255,91,.08) inset}
+    .tag{
+      position:absolute;right:16px;top:16px;padding:6px 9px;border-radius:999px;
+      background:rgba(121,255,91,.12);border:1px solid rgba(121,255,91,.2);
+      color:var(--accent);font-size:10px;font-weight:1000;text-transform:uppercase;letter-spacing:.08em
+    }
+    .pass-icon{
+      width:45px;height:45px;border-radius:14px;display:grid;place-items:center;
+      background:#161d1f;border:1px solid var(--line);font-size:20px
+    }
+    .pass h3{margin-top:17px;font-size:22px}
+    .price{margin-top:10px;font-size:34px;font-weight:1000;letter-spacing:-.04em}
+    .price small{font-size:13px;color:var(--muted);font-weight:700}
+    .pass ul{list-style:none;margin-top:18px;display:grid;gap:10px}
+    .pass li{color:#ccd6d2;font-size:13px;display:flex;gap:9px;line-height:1.35}
+    .check{color:var(--accent);font-weight:1000}
+    .pass .btn{width:100%;margin-top:22px}
+
+    .features{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .feature{padding:20px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.025)}
+    .feature-icon{font-size:23px}
+    .feature h3{font-size:16px;margin-top:13px}.feature p{font-size:13px;color:var(--muted);line-height:1.5;margin-top:7px}
+
+    .faq{display:grid;gap:10px}
+    details{border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025);padding:0 18px}
+    summary{cursor:pointer;list-style:none;padding:18px 2px;font-weight:800}
+    summary::-webkit-details-marker{display:none}
+    details p{color:var(--muted);font-size:14px;line-height:1.6;padding:0 2px 18px}
+
+    .footer{padding:34px 0 55px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+    .footer-inner{display:flex;justify-content:space-between;gap:20px;align-items:center}
+    .footer a:hover{color:var(--text)}
+
+    .modal{
+      position:fixed;inset:0;z-index:80;display:none;place-items:center;padding:18px;
+      background:rgba(0,0,0,.72);backdrop-filter:blur(12px)
+    }
+    .modal.show{display:grid}
+    .modal-box{
+      width:min(560px,100%);border:1px solid var(--line);border-radius:24px;
+      background:#0b1012;padding:24px;box-shadow:0 30px 90px rgba(0,0,0,.5);
+      animation:pop .2s ease;
+    }
+    @keyframes pop{from{opacity:0;transform:scale(.97) translateY(8px)}to{opacity:1;transform:none}}
+    .modal-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .modal-top h3{font-size:23px}
+    .close{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:#121719;color:#fff;cursor:pointer}
+    .steps{display:grid;gap:10px;margin-top:18px}
+    .step{display:flex;gap:12px;align-items:flex-start;padding:13px;border:1px solid var(--line);border-radius:14px}
+    .num{width:26px;height:26px;border-radius:8px;background:rgba(121,255,91,.12);color:var(--accent);display:grid;place-items:center;font-weight:1000}
+    .step b{font-size:14px}.step span{display:block;color:var(--muted);font-size:12px;margin-top:3px;line-height:1.45}
+    .notice{margin-top:16px;padding:13px;border-radius:13px;background:rgba(255,255,255,.035);color:#aebbb7;font-size:12px;line-height:1.5}
+    .modal-actions{display:flex;justify-content:end;gap:10px;margin-top:18px}
+
+    .toast{
+      position:fixed;right:18px;bottom:18px;z-index:100;
+      padding:12px 15px;border-radius:13px;background:#0e1517;border:1px solid var(--line);
+      box-shadow:0 16px 40px rgba(0,0,0,.35);font-size:13px;
+      transform:translateY(18px);opacity:0;pointer-events:none;transition:.22s
+    }
+    .toast.show{transform:none;opacity:1}
+
+    .mobile-menu{display:none}
+    @media (max-width: 900px){
+      .hero-grid{grid-template-columns:1fr}
+      .passes{grid-template-columns:1fr}
+      .features{grid-template-columns:repeat(2,1fr)}
+      .nav-links{display:none}
+      .mobile-menu{display:block}
+    }
+    @media (max-width: 560px){
+      .container{width:min(var(--max),calc(100% - 24px))}
+      .nav-inner{height:68px}
+      .nav-actions .btn:not(.btn-primary){display:none}
+      .hero{padding-top:52px}
+      .hero p{font-size:15px}
+      .features{grid-template-columns:1fr}
+      .section-head{display:block}
+      .section-head p{margin-top:8px}
+      .stats{grid-template-columns:1fr}
+      .footer-inner{align-items:flex-start;flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="#top" class="brand">
+        <span class="brand-mark">V</span>
+        <span>VOIDCRAFT</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#passes">Доступ в мир</a>
+        <a href="#about">О сервере</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="btn mobile-menu" onclick="scrollToSection('passes')">Доступ в мир</button>
+        <button class="btn" onclick="copyIP()">Скопировать IP</button>
+        <button class="btn btn-primary" onclick="openModal('Оформление проходки')">Получить доступ</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow"><span class="dot"></span> invite-only server</span>
+          <h1>Мир, где <span class="gradient">каждый строит своё.</span></h1>
+          <p>
+            Закрытый Minecraft-сервер для небольшого круга игроков.
+            Никакого случайного онлайна — только отобранные участники,
+            живая экономика и мир, который хочется развивать.
+          </p>
+
+          <div class="hero-cta">
+            <button class="btn btn-primary" onclick="scrollToSection('passes')">Выбрать проходку →</button>
+            <button class="btn" onclick="scrollToSection('about')">Что внутри?</button>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <div class="status-row">
+            <span class="status"><span class="dot"></span> Сервер онлайн</span>
+            <span style="color:var(--muted);font-size:12px">1.21.x</span>
+          </div>
+
+          <h3>Вход в мир</h3>
+          <p>Сначала проходка и whitelist — затем ты получаешь доступ к своему месту в мире.</p>
+
+          <div class="ip-box">
+            <span class="ip" id="serverIp">play.voidcraft.ru</span>
+            <button class="copy" title="Скопировать IP" onclick="copyIP()">⧉</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><b>24/7</b><span>работа мира</span></div>
+            <div class="stat"><b>72</b><span>слота</span></div>
+            <div class="stat"><b id="online">37</b><span>игроков сейчас</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="passes">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Доступ в мир</h2>
+            <p style="margin-top:6px">Выбери проходку и попади в закрытый мир. Дальше территория, строительство и развитие — уже твоя история.</p>
+          </div>
+        </div>
+
+        <div class="passes">
+          <article class="pass">
+            <div class="pass-icon">⛏</div>
+            <h3>Starter</h3>
+            <div class="price">199 ₽ <small>/ навсегда</small></div>
+            <ul>
+              <li><span class="check">✓</span> Доступ к закрытому серверу</li>
+              <li><span class="check">✓</span> Базовый набор игрока</li>
+              <li><span class="check">✓</span> Закрытый Discord</li>
+            </ul>
+            <button class="btn" onclick="openPurchase('Starter', '199 ₽')">Получить</button>
+          </article>
+
+          <article class="pass popular">
+            <span class="tag">Популярно</span>
+            <div class="pass-icon">◆</div>
+            <h3>Premium</h3>
+            <div class="price">399 ₽ <small>/ навсегда</small></div>
+            <ul>
+              <li><span class="check">✓</span> Всё из Starter</li>
+              <li><span class="check">✓</span> Роль Premium + префикс</li>
+              <li><span class="check">✓</span> Косметические бонусы</li>
+              <li><span class="check">✓</span> Приоритетная очередь</li>
+            </ul>
+            <button class="btn btn-primary" onclick="openPurchase('Premium', '399 ₽')">Получить</button>
+          </article>
+
+          <article class="pass">
+            <div class="pass-icon">✦</div>
+            <h3>Creator</h3>
+            <div class="price">699 ₽ <small>/ навсегда</small></div>
+            <ul>
+              <li><span class="check">✓</span> Всё из Premium</li>
+              <li><span class="check">✓</span> Creator-роль</li>
+              <li><span class="check">✓</span> Дополнительные косметические эффекты</li>
+              <li><span class="check">✓</span> Прямая заявка администрации</li>
+            </ul>
+            <button class="btn" onclick="openPurchase('Creator', '699 ₽')">Получить</button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Что здесь можно делать?</h2>
+            <p style="margin-top:6px">Сервер построен вокруг идеи живого мира, который создают сами игроки.</p>
+          </div>
+        </div>
+
+        <div class="features">
+          <div class="feature"><div class="feature-icon">🧱</div><h3>Своя территория</h3><p>Размечай свою землю, строй базу, деревню или целый город.</p></div>
+          <div class="feature"><div class="feature-icon">🛡️</div><h3>Города и страны</h3><p>Объединяйся с игроками, создавай поселения и развивай свои территории.</p></div>
+          <div class="feature"><div class="feature-icon">⚡</div><h3>Экономика</h3><p>Торгуй, развивай ресурсы и строй экономику своей территории.</p></div>
+          <div class="feature"><div class="feature-icon">🎙️</div><h3>Политика мира</h3><p>Союзы, договоры, границы и конфликты — всё зависит от игроков.</p></div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section id="world">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Твой мир. Твои правила.</h2>
+            <p style="margin-top:6px">Не обычный публичный survival, где всё уже занято. Здесь мир развивается вместе с игроками.</p>
+          </div>
+        </div>
+
+        <div class="features">
+          <div class="feature"><div class="feature-icon">🏠</div><h3>Освой землю</h3><p>Выбери место, поставь границы и начинай строить свою историю.</p></div>
+          <div class="feature"><div class="feature-icon">🏙️</div><h3>Создай город</h3><p>Собери игроков, развивай инфраструктуру и превращай базу в настоящее поселение.</p></div>
+          <div class="feature"><div class="feature-icon">🤝</div><h3>Договаривайся</h3><p>Союзы, торговля, договоры о границах и совместные проекты.</p></div>
+          <div class="feature"><div class="feature-icon">🌍</div><h3>Меняй карту</h3><p>Со временем именно игроки решают, как будет выглядеть мир сервера.</p></div>
+        </div>
+      </div>
+    </section>
+
+<section id="faq">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>FAQ</h2>
+            <p style="margin-top:6px">Самое важное перед покупкой доступа.</p>
+          </div>
+        </div>
+
+        <div class="faq">
+          <details>
+            <summary>Что происходит после покупки?</summary>
+            <p>После подтверждения покупки игроку можно автоматически добавить whitelist, выдать роль Discord и отправить данные для входа.</p>
+          </details>
+          <details>
+            <summary>Есть ли возврат?</summary>
+            <p>Добавь сюда реальные правила возврата твоего сервера и способ связи с администрацией.</p>
+          </details>
+          <details>
+            <summary>Как устроены территории?</summary>
+            <p>На сервере можно сделать систему защиты территорий: игрок выбирает участок, строит на нём и сам управляет доступом.</p>
+          </details>
+          <details>
+            <summary>Можно ли создать свой город?</summary>
+            <p>Да. Несколько игроков могут объединяться, строить общий город, распределять участки и развивать его вместе.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>© 2026 VOIDCRAFT. Закрытый survival-проект.</div>
+      <div style="display:flex;gap:16px"><a href="#passes">Доступ в мир</a><a href="#faq">FAQ</a><a href="#top">Наверх ↑</a></div>
+    </div>
+  </footer>
+
+  <div class="modal" id="modal" onclick="closeOnBackdrop(event)">
+    <div class="modal-box">
+      <div class="modal-top">
+        <h3 id="modalTitle">Оформление доступа</h3>
+        <button class="close" onclick="closeModal()">×</button>
+      </div>
+      <div id="modalContent" class="steps">
+        <div class="step"><span class="num">1</span><div><b>Выбери проходку</b><span>Нажми «Получить» в нужной карточке.</span></div></div>
+        <div class="step"><span class="num">2</span><div><b>Оплати</b><span>Подключи ЮKassa, CloudPayments, Stripe или свой payment backend.</span></div></div>
+        <div class="step"><span class="num">3</span><div><b>Получи доступ</b><span>После подтверждения покупки сервер может автоматически выдать роль.</span></div></div>
+      </div>
+      <div class="notice">Сейчас checkout демонстрационный. Реальную оплату и автоматическую выдачу whitelist нужно подключить на backend.</div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal()">Закрыть</button>
+        <button class="btn btn-primary" onclick="demoPurchase()">Продолжить</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Готово</div>
+
+  <script>
+    function scrollToSection(id){
+      document.getElementById(id)?.scrollIntoView({behavior:'smooth'});
+    }
+
+    function copyIP(){
+      const ip = document.getElementById('serverIp').textContent.trim();
+      navigator.clipboard?.writeText(ip).then(
+        () => showToast('IP сервера скопирован'),
+        () => showToast('IP: ' + ip)
+      );
+    }
+
+    function showToast(message){
+      const el = document.getElementById('toast');
+      el.textContent = message;
+      el.classList.add('show');
+      clearTimeout(window.__toast);
+      window.__toast = setTimeout(()=>el.classList.remove('show'),2200);
+    }
+
+    function openModal(title){
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modal').classList.add('show');
+      document.body.style.overflow='hidden';
+    }
+
+    function openPurchase(plan, price){
+      document.getElementById('modalTitle').textContent = plan + ' — ' + price;
+      document.getElementById('modalContent').innerHTML = `
+        <div class="step"><span class="num">1</span><div><b>Проходка: ${plan}</b><span>Стоимость: ${price}. Сейчас это демонстрационный checkout.</span></div></div>
+        <div class="step"><span class="num">2</span><div><b>Оплата</b><span>Подключи настоящий платёжный провайдер на backend.</span></div></div>
+        <div class="step"><span class="num">3</span><div><b>Доступ</b><span>После успешной оплаты можно автоматически добавить игрока в whitelist.</span></div></div>
+      `;
+      document.getElementById('modal').classList.add('show');
+      document.body.style.overflow='hidden';
+    }
+
+    function demoPurchase(){
+      closeModal();
+      showToast('Демо: checkout готов к подключению');
+    }
+
+    function closeModal(){
+      document.getElementById('modal').classList.remove('show');
+      document.body.style.overflow='';
+    }
+
+    function closeOnBackdrop(e){
+      if(e.target.id === 'modal') closeModal();
+    }
+
+    document.addEventListener('keydown', e => {
+      if(e.key === 'Escape') closeModal();
+    });
+
+    // Живой декоративный онлайн-счётчик.
+    let online = 37;
+    setInterval(() => {
+      const delta = Math.random() > .52 ? 1 : -1;
+      online = Math.max(18, Math.min(52, online + delta));
+      document.getElementById('online').textContent = online;
+    }, 4500);
+  </script>
+</body>
+</html>

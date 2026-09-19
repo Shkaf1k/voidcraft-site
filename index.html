@@ -1,561 +1,145 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="theme-color" content="#060807"/>
-  <title>VOIDCRAFT — закрытый Minecraft survival</title>
-  <style>
-    :root{
-      --bg:#050705;
-      --bg2:#090d0a;
-      --panel:#0d130f;
-      --panel2:#111812;
-      --text:#f4f8f5;
-      --muted:#92a099;
-      --soft:#c6d0ca;
-      --line:rgba(255,255,255,.08);
-      --green:#91ff6b;
-      --green2:#d4ffc9;
-      --cyan:#63d4ff;
-      --gold:#ffd65e;
-      --red:#ff6a74;
-      --max:1180px;
-      --radius:24px;
-      --shadow:0 30px 100px rgba(0,0,0,.42);
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth;scroll-padding-top:92px}
-    body{
-      min-height:100vh;overflow-x:hidden;color:var(--text);
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      background:
-        radial-gradient(circle at 16% 0%,rgba(145,255,107,.12),transparent 27%),
-        radial-gradient(circle at 87% 13%,rgba(99,212,255,.07),transparent 22%),
-        linear-gradient(180deg,#050705 0%,#090d0a 48%,#060807 100%);
-    }
-    body:before{
-      content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;
-      background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
-      background-size:42px 42px;mask-image:linear-gradient(to bottom,black,transparent 76%);
-    }
-    body:after{
-      content:"";position:fixed;left:50%;top:-130px;width:520px;height:260px;transform:translateX(-50%);
-      background:radial-gradient(ellipse,rgba(145,255,107,.08),transparent 68%);
-      filter:blur(4px);pointer-events:none;
-    }
-    a{color:inherit;text-decoration:none}
-    button{font:inherit}
-    .container{width:min(var(--max),calc(100% - 34px));margin:auto}
-
-    .nav{
-      position:sticky;top:0;z-index:60;
-      background:rgba(5,7,5,.72);backdrop-filter:blur(18px);
-      border-bottom:1px solid var(--line)
-    }
-    .progress{position:absolute;bottom:-1px;left:0;width:100%;height:2px;transform:scaleX(0);transform-origin:left;background:linear-gradient(90deg,var(--green),#e4ffd9);box-shadow:0 0 15px rgba(145,255,107,.35)}
-    .nav-in{height:74px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-    .brand{display:flex;align-items:center;gap:11px;font-size:13px;font-weight:1000;letter-spacing:.12em}
-    .mark{width:35px;height:35px;display:grid;place-items:center;border-radius:11px;background:linear-gradient(135deg,var(--green),#44bd35);color:#081107;box-shadow:0 0 30px rgba(145,255,107,.18)}
-    .nav-links{display:flex;gap:25px;color:var(--muted);font-size:13px}
-    .nav-links a{position:relative;padding:8px 0;transition:.18s}
-    .nav-links a:hover,.nav-links a.active{color:var(--text)}
-    .nav-links a:after{content:"";position:absolute;left:0;right:0;bottom:1px;height:2px;border-radius:999px;background:var(--green);transform:scaleX(0);transition:.18s;box-shadow:0 0 12px rgba(145,255,107,.25)}
-    .nav-links a.active:after{transform:scaleX(1)}
-    .nav-actions{display:flex;gap:9px}
-    .btn{
-      border:1px solid var(--line);background:#0f1511;color:var(--text);cursor:pointer;
-      padding:11px 15px;border-radius:13px;font-size:13px;font-weight:850;
-      transition:.18s transform,.18s border-color,.18s box-shadow,.18s background
-    }
-    .btn:hover{transform:translateY(-2px);border-color:rgba(145,255,107,.38);background:#121a14}
-    .btn-main{color:#071007;background:linear-gradient(135deg,var(--green),#bbffa7);border-color:rgba(145,255,107,.4);box-shadow:0 10px 35px rgba(145,255,107,.14)}
-    .btn-main:hover{box-shadow:0 15px 44px rgba(145,255,107,.21)}
-    .btn-ghost{background:transparent}
-
-    .hero{padding:76px 0 45px}
-    .hero-grid{display:grid;grid-template-columns:1.06fr .94fr;gap:24px;align-items:center}
-    .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border:1px solid rgba(145,255,107,.17);border-radius:999px;background:rgba(145,255,107,.045);color:var(--green2);font-size:10px;font-weight:950;letter-spacing:.1em;text-transform:uppercase}
-    .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 15px var(--green)}
-    h1{margin-top:19px;max-width:760px;font-size:clamp(48px,7vw,86px);line-height:.92;letter-spacing:-.06em}
-    .grad{background:linear-gradient(105deg,#fff 8%,#dbffd5 45%,var(--green));color:transparent;-webkit-background-clip:text;background-clip:text}
-    .hero-copy{max-width:700px;margin-top:22px;color:var(--muted);font-size:17px;line-height:1.67}
-    .hero-copy strong{color:#e4f1e5;font-weight:850}
-    .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
-    .proofs{display:flex;gap:18px;flex-wrap:wrap;margin-top:25px;color:#b8c4bd;font-size:11px}
-    .proofs span{display:flex;align-items:center;gap:7px}
-
-    .hero-card{
-      position:relative;overflow:hidden;padding:18px;border-radius:27px;border:1px solid var(--line);
-      background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.015));
-      box-shadow:var(--shadow);transition:transform .16s ease;
-    }
-    .hero-card:before{
-      content:"";position:absolute;right:-100px;top:-100px;width:260px;height:260px;border-radius:50%;
-      background:rgba(145,255,107,.11);filter:blur(12px)
-    }
-    .terminal{
-      border:1px solid var(--line);border-radius:20px;background:#080c09;overflow:hidden
-    }
-    .terminal-top{height:42px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);color:var(--muted);font-size:10px}
-    .traffic{display:flex;gap:6px}.traffic i{display:block;width:7px;height:7px;border-radius:50%;background:#343b37}
-    .terminal-body{padding:18px;min-height:290px}
-    .terminal-line{display:flex;gap:9px;font:12px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;color:#c9d4ce}
-    .terminal-line .green{color:var(--green)}.terminal-line .blue{color:var(--cyan)}.terminal-line .gold{color:var(--gold)}
-    .server-title{font-size:23px;font-weight:950;margin:10px 0 4px;letter-spacing:-.03em}
-    .server-sub{font-size:11px;color:var(--muted)}
-    .server-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}
-    .server-stat{padding:13px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025)}
-    .server-stat b{display:block;font-size:18px}.server-stat span{display:block;margin-top:3px;color:var(--muted);font-size:10px}
-    .ip{margin-top:10px;padding:12px 13px;border:1px solid var(--line);border-radius:13px;background:#0b100d;display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .ip code{font:12px ui-monospace,SFMono-Regular,Menlo,monospace}
-    .copy{width:36px;height:36px;border:1px solid var(--line);border-radius:10px;background:#121813;color:#fff;cursor:pointer}
-    .copy:hover{border-color:rgba(145,255,107,.35)}
-    .online{color:var(--green);font-size:11px;font-weight:900;display:flex;align-items:center;gap:7px}
-
-    .floating-note{
-      position:absolute;left:-15px;bottom:19px;padding:10px 12px;border:1px solid var(--line);border-radius:13px;
-      background:rgba(8,12,9,.86);backdrop-filter:blur(10px);box-shadow:0 15px 40px rgba(0,0,0,.25);
-      font-size:10px;color:#c5d0ca
-    }
-    .floating-note b{color:var(--green)}
-
-    section{padding:68px 0}
-    .head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:22px}
-    .head h2{font-size:35px;line-height:1;letter-spacing:-.04em}
-    .head p{max-width:550px;color:var(--muted);font-size:13px;line-height:1.62}
-
-    .marquee{
-      overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-      padding:13px 0;margin-top:5px;background:rgba(255,255,255,.012)
-    }
-    .marquee-track{display:flex;width:max-content;animation:marquee 22s linear infinite;gap:34px;color:#829088;font-size:10px;font-weight:900;letter-spacing:.09em;text-transform:uppercase}
-    .marquee-track span{display:flex;align-items:center;gap:13px}.marquee-track b{color:var(--green)}
-    @keyframes marquee{to{transform:translateX(-50%)}}
-
-    .principles{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
-    .principle{position:relative;padding:20px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.022);overflow:hidden;transition:.2s}
-    .principle:hover{transform:translateY(-4px);border-color:rgba(145,255,107,.23)}
-    .num{font:700 10px ui-monospace,SFMono-Regular,Menlo,monospace;color:#647069}
-    .principle-icon{font-size:22px;margin-top:13px}.principle h3{font-size:15px;margin-top:12px}.principle p{font-size:12px;line-height:1.55;color:var(--muted);margin-top:7px}
-
-    .steps-wrap{display:grid;grid-template-columns:1fr .85fr;gap:14px}
-    .steps,.rule-panel{border:1px solid var(--line);border-radius:23px;background:#0c120e}
-    .steps{padding:14px}
-    .step-row{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;padding:15px;border-radius:16px}
-    .step-row + .step-row{border-top:1px solid var(--line)}
-    .step-no{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:rgba(145,255,107,.08);color:var(--green);border:1px solid rgba(145,255,107,.14);font:900 12px ui-monospace}
-    .step-row h3{font-size:14px}.step-row p{color:var(--muted);font-size:11px;line-height:1.5;margin-top:3px}
-    .step-tag{font-size:9px;font-weight:900;color:#8e9993;padding:6px 8px;border:1px solid var(--line);border-radius:999px}
-    .rule-panel{padding:20px}
-    .rule-panel h3{font-size:20px}.rule-panel p{color:var(--muted);font-size:12px;line-height:1.6;margin-top:8px}
-    .rule-tabs{display:flex;gap:7px;margin-top:17px;flex-wrap:wrap}
-    .tab{padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#0f1511;color:var(--muted);font-size:10px;cursor:pointer}
-    .tab.active{color:var(--text);border-color:rgba(145,255,107,.3);background:rgba(145,255,107,.07)}
-    .tab-content{margin-top:13px;padding:14px;border-radius:14px;background:rgba(255,255,255,.025);border:1px solid var(--line);min-height:88px}
-    .tab-content strong{display:block;font-size:12px}.tab-content span{display:block;margin-top:5px;color:var(--muted);font-size:11px;line-height:1.55}
-
-    .passes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-    .pass{position:relative;padding:22px;border-radius:23px;border:1px solid var(--line);background:linear-gradient(180deg,#101611,#0a0f0c);transition:.2s;overflow:hidden}
-    .pass:hover{transform:translateY(-5px);border-color:rgba(145,255,107,.29);box-shadow:0 20px 55px rgba(0,0,0,.25)}
-    .pass.featured{border-color:rgba(145,255,107,.42);box-shadow:0 0 0 1px rgba(145,255,107,.06) inset}
-    .pill{position:absolute;right:15px;top:15px;padding:6px 8px;border:1px solid rgba(145,255,107,.18);border-radius:999px;background:rgba(145,255,107,.08);color:var(--green);font-size:8px;font-weight:1000;text-transform:uppercase;letter-spacing:.09em}
-    .pass-icon{width:45px;height:45px;display:grid;place-items:center;border:1px solid var(--line);border-radius:14px;background:#161d18;font-size:18px}
-    .pass h3{font-size:22px;margin-top:17px}.price{font-size:35px;letter-spacing:-.05em;font-weight:1000;margin-top:6px}.price small{font-size:11px;color:var(--muted);font-weight:750}
-    .pass ul{display:grid;gap:10px;margin-top:17px;list-style:none}.pass li{display:flex;gap:9px;color:#cad4cf;font-size:12px;line-height:1.4}.check{color:var(--green);font-weight:1000}.pass .btn{width:100%;margin-top:21px}
-
-    .cta{
-      position:relative;overflow:hidden;padding:34px;border:1px solid rgba(145,255,107,.17);border-radius:27px;
-      background:radial-gradient(circle at 77% 30%,rgba(145,255,107,.12),transparent 28%),linear-gradient(135deg,#0d140f,#0b100d);
-    }
-    .cta:after{content:"";position:absolute;right:-50px;bottom:-120px;width:300px;height:250px;background:radial-gradient(circle,rgba(99,212,255,.07),transparent 65%);pointer-events:none}
-    .cta h2{font-size:38px;letter-spacing:-.045em;max-width:600px}.cta p{color:var(--muted);font-size:13px;line-height:1.6;margin-top:10px;max-width:610px}
-    .cta-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:21px}
-    .cta-meta{position:absolute;right:30px;top:31px;color:#77827b;font-size:10px}.cta-meta b{color:var(--green)}
-
-    .faq{display:grid;gap:9px}.faq details{border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.02);padding:0 17px}
-    .faq summary{cursor:pointer;list-style:none;padding:17px 2px;font-size:13px;font-weight:850}.faq summary::-webkit-details-marker{display:none}
-    .faq details p{padding:0 2px 17px;color:var(--muted);font-size:12px;line-height:1.62}
-
-    .footer{padding:36px 0 58px;border-top:1px solid var(--line);color:var(--muted);font-size:11px}.footer-in{display:flex;align-items:center;justify-content:space-between;gap:16px}.footer-links{display:flex;gap:15px}.footer a:hover{color:var(--text)}
-
-    .reveal{opacity:0;transform:translateY(22px);transition:.68s ease}.reveal.visible{opacity:1;transform:none}
-    @media (prefers-reduced-motion:reduce){
-      html{scroll-behavior:auto}.reveal{opacity:1;transform:none}.marquee-track{animation:none!important}
-      *,*:before,*:after{transition-duration:.01ms!important;animation-duration:.01ms!important}
-    }
-
-    .modal{position:fixed;inset:0;z-index:100;display:none;place-items:center;padding:17px;background:rgba(0,0,0,.73);backdrop-filter:blur(12px)}
-    .modal.show{display:grid}
-    .modal-box{width:min(560px,100%);background:#0b110d;border:1px solid var(--line);border-radius:24px;padding:23px;box-shadow:0 35px 110px rgba(0,0,0,.55);animation:pop .18s ease}
-    @keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
-    .modal-top{display:flex;justify-content:space-between;gap:10px;align-items:center}.modal-top h3{font-size:21px}.close{width:37px;height:37px;border:1px solid var(--line);border-radius:10px;background:#111813;color:#fff;cursor:pointer}
-    .steps-modal{display:grid;gap:9px;margin-top:17px}.mstep{display:flex;gap:11px;padding:12px;border:1px solid var(--line);border-radius:13px}.mnum{flex:0 0 26px;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:rgba(145,255,107,.1);color:var(--green);font-weight:1000}.mstep b{font-size:13px}.mstep span{display:block;color:var(--muted);font-size:11px;line-height:1.5;margin-top:3px}
-    .notice{margin-top:14px;padding:12px;border-radius:12px;background:rgba(255,255,255,.03);color:#aebaB5;font-size:11px;line-height:1.5}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
-    .toast{position:fixed;right:16px;bottom:16px;z-index:120;padding:11px 14px;border:1px solid var(--line);background:#0d140f;border-radius:12px;box-shadow:0 18px 48px rgba(0,0,0,.4);font-size:12px;opacity:0;transform:translateY(15px);pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:none}
-    .back-top{position:fixed;right:16px;bottom:70px;z-index:90;width:42px;height:42px;border-radius:13px;border:1px solid var(--line);background:rgba(11,17,13,.88);color:var(--text);cursor:pointer;opacity:0;pointer-events:none;transform:translateY(10px);transition:.2s;backdrop-filter:blur(12px)}.back-top.show{opacity:1;pointer-events:auto;transform:none}.back-top:hover{border-color:rgba(145,255,107,.35)}
-
-    @media(max-width:950px){
-      .hero-grid,.steps-wrap{grid-template-columns:1fr}
-      .passes{grid-template-columns:1fr}
-      .principles{grid-template-columns:repeat(2,1fr)}
-      .nav-links{display:none}
-      .floating-note{left:12px}
-      .cta-meta{position:static;margin-top:18px}
-    }
-    @media(max-width:580px){
-      .container{width:min(var(--max),calc(100% - 24px))}
-      .nav-in{height:67px}.nav-actions .btn-copy{display:none}
-      .hero{padding-top:52px}
-      .hero-copy{font-size:15px}
-      .principles{grid-template-columns:1fr}
-      .head{display:block}.head p{margin-top:8px}
-      .server-grid{grid-template-columns:1fr}
-      .cta{padding:25px}.cta h2{font-size:31px}
-      .footer-in{align-items:flex-start;flex-direction:column}
-      .back-top{right:12px;bottom:68px}
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой Minecraft Сервер</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        header {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=1000&auto=format&fit=crop') no-repeat center center/cover;
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+        }
+        header h1 {
+            font-size: 3rem;
+            color: #4CAF50;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+        header p {
+            font-size: 1.2rem;
+            max-width: 600px;
+        }
+        .container {
+            max-width: 800px;
+            margin: -40px auto 40px auto;
+            padding: 20px;
+        }
+        .card {
+            background: #1e1e1e;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            margin-bottom: 25px;
+        }
+        .card h2 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 8px;
+        }
+        .ip-box {
+            background: #2d2d2d;
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #fff;
+            border: 1px dashed #4CAF50;
+        }
+        .ip-box button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .ip-box button:hover {
+            background: #45a049;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 <body>
 
-<header class="nav">
-  <div class="progress" id="progress"></div>
-  <div class="container nav-in">
-    <a class="brand" href="#top"><span class="mark">V</span>VOIDCRAFT</a>
-    <nav class="nav-links">
-      <a href="#world">Про сервер</a>
-      <a href="#passes">Доступ</a>
-      <a href="#rules">Правила мира</a>
-      <a href="#faq">FAQ</a>
-    </nav>
-    <div class="nav-actions">
-      <button class="btn btn-copy" onclick="copyIP()">Скопировать IP</button>
-      <button class="btn btn-main" onclick="scrollToId('passes')">Получить доступ</button>
-    </div>
-  </div>
-</header>
+    <header>
+        <h1>Название Сервера</h1>
+        <p>Лучшее выживание, крутые плагины и уютное сообщество жгут тебя!</p>
+    </header>
 
-<main id="top">
-
-  <section class="hero">
-    <div class="container hero-grid">
-      <div class="reveal">
-        <span class="eyebrow"><span class="dot"></span> закрытый survival · invite only</span>
-        <h1>Не просто сервер.<br><span class="grad">Твой кусок мира.</span></h1>
-        <p class="hero-copy">
-          <strong>VOIDCRAFT</strong> — закрытый Minecraft survival, где игроки сами
-          создают города, осваивают территории, торгуют и развивают мир.
-          Небольшой онлайн, долгий мир и ощущение, что твои постройки действительно имеют значение.
-        </p>
-        <div class="hero-actions">
-          <button class="btn btn-main" onclick="scrollToId('passes')">Войти в мир →</button>
-          <button class="btn btn-ghost" onclick="scrollToId('world')">Как всё устроено</button>
-        </div>
-        <div class="proofs">
-          <span><span class="dot"></span> whitelist</span>
-          <span>◈ свои территории</span>
-          <span>◈ города игроков</span>
-          <span>◈ экономика</span>
-        </div>
-      </div>
-
-      <div class="hero-card reveal" id="heroCard">
-        <div class="terminal">
-          <div class="terminal-top">
-            <div class="traffic"><i></i><i></i><i></i></div>
-            <span>voidcraft://server</span>
-            <span class="online"><span class="dot"></span> ONLINE</span>
-          </div>
-          <div class="terminal-body">
-            <div class="terminal-line"><span class="green">root@voidcraft</span><span>~</span><span>$ status</span></div>
-            <div class="terminal-line"><span class="blue">world</span><span>:</span><span>alive</span></div>
-            <div class="terminal-line"><span class="blue">whitelist</span><span>:</span><span>true</span></div>
-            <div class="terminal-line"><span class="gold">economy</span><span>:</span><span>active</span></div>
-            <div class="server-title">VOIDCRAFT</div>
-            <div class="server-sub">закрытый мир · игроки строят его сами</div>
-
-            <div class="server-grid">
-              <div class="server-stat"><b>24/7</b><span>мир работает</span></div>
-              <div class="server-stat"><b id="online">37</b><span>игроков онлайн</span></div>
-              <div class="server-stat"><b>72</b><span>макс. слотов</span></div>
-              <div class="server-stat"><b>1.21.x</b><span>версия Minecraft</span></div>
+    <div class="container">
+        <!-- Блок подключения -->
+        <div class="card">
+            <h2>IP-адрес сервера</h2>
+            <p style="margin-bottom: 10px;">Скопируй адрес и заходи играть (Версия: 1.20+):</p>
+            <div class="ip-box">
+                <span id="server-ip">Твой_Сервер.aternos.me:Порт</span>
+                <button onclick="copyIP()">Скопировать</button>
             </div>
-
-            <div class="ip">
-              <code id="ipText">play.voidcraft.ru</code>
-              <button class="copy" onclick="copyIP()" aria-label="Скопировать IP">⧉</button>
-            </div>
-          </div>
-        </div>
-        <div class="floating-note">новый игрок получил участок <b>+1</b></div>
-      </div>
-    </div>
-  </section>
-
-  <div class="marquee">
-    <div class="marquee-track">
-      <span><b>✦</b> BUILD</span><span>TRADE</span><span>EXPAND</span><span>CREATE</span><span><b>✦</b> BUILD</span><span>TRADE</span><span>EXPAND</span><span>CREATE</span>
-      <span><b>✦</b> BUILD</span><span>TRADE</span><span>EXPAND</span><span>CREATE</span><span><b>✦</b> BUILD</span><span>TRADE</span><span>EXPAND</span><span>CREATE</span>
-    </div>
-  </div>
-
-  <section id="world">
-    <div class="container">
-      <div class="head reveal">
-        <div><h2>Как здесь живёт мир</h2></div>
-        <p>Смысл закрытого формата — не ограничивать игроков, а собрать маленькое сообщество, где действия каждого заметны.</p>
-      </div>
-
-      <div class="principles">
-        <div class="principle reveal"><div class="num">01 / LAND</div><div class="principle-icon">🏠</div><h3>Освой землю</h3><p>Выбирай место, развивай территорию и превращай пустой участок в свою базу.</p></div>
-        <div class="principle reveal"><div class="num">02 / CITY</div><div class="principle-icon">🏙️</div><h3>Создай город</h3><p>Объединяйся с игроками, строй улицы, районы, фермы и общие объекты.</p></div>
-        <div class="principle reveal"><div class="num">03 / TRADE</div><div class="principle-icon">💰</div><h3>Развивай экономику</h3><p>Торгуй ресурсами, открывай магазины и делай свою территорию полезной другим.</p></div>
-        <div class="principle reveal"><div class="num">04 / WORLD</div><div class="principle-icon">🤝</div><h3>Меняй мир</h3><p>Союзы, договоры, границы и совместные проекты появляются из решений игроков.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="rules">
-    <div class="container">
-      <div class="head reveal">
-        <div><h2>Сначала атмосфера</h2></div>
-        <p>Чтобы мир не превращался в хаос, важны простые правила. Переключай категории и редактируй текст под свои реальные правила.</p>
-      </div>
-
-      <div class="steps-wrap">
-        <div class="steps reveal">
-          <div class="step-row">
-            <div class="step-no">01</div>
-            <div><h3>Получаешь доступ</h3><p>Проходка → whitelist → инструкции → вход в мир.</p></div>
-            <span class="step-tag">START</span>
-          </div>
-          <div class="step-row">
-            <div class="step-no">02</div>
-            <div><h3>Выбираешь место</h3><p>Находишь свободную территорию и начинаешь строить.</p></div>
-            <span class="step-tag">BUILD</span>
-          </div>
-          <div class="step-row">
-            <div class="step-no">03</div>
-            <div><h3>Собираешь людей</h3><p>Создаёшь поселение, город или просто команду друзей.</p></div>
-            <span class="step-tag">TEAM</span>
-          </div>
-          <div class="step-row">
-            <div class="step-no">04</div>
-            <div><h3>Оставляешь след</h3><p>Твои решения становятся частью истории общего мира.</p></div>
-            <span class="step-tag">LEGACY</span>
-          </div>
         </div>
 
-        <div class="rule-panel reveal">
-          <h3>Правила мира</h3>
-          <p>Выбери категорию — здесь можно быстро объяснить игроку главные принципы проекта.</p>
-          <div class="rule-tabs">
-            <button class="tab active" data-tab="building">Строительство</button>
-            <button class="tab" data-tab="territory">Территории</button>
-            <button class="tab" data-tab="economy">Экономика</button>
-            <button class="tab" data-tab="community">Комьюнити</button>
-          </div>
-          <div class="tab-content" id="tabContent">
-            <strong>Строй красиво и со смыслом</strong>
-            <span>Не мешай соседям и уважай общие зоны. Большие проекты обсуждаются заранее, чтобы мир оставался цельным.</span>
-          </div>
+        <!-- Новости -->
+        <div class="card">
+            <h2>Новости и обновления</h2>
+            <p><strong>📌 Обновление v1.0 (Сегодня):</strong></p>
+            <ul>
+                <li>Сервер успешно запущен и работает!</li>
+                <li>Добавлены плагины на приваты и защиту территории.</li>
+                <li>Настроена экономика и магазин на спавне.</li>
+            </ul>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <section id="passes">
-    <div class="container">
-      <div class="head reveal">
-        <div><h2>Доступ в мир</h2></div>
-        <p>Проходка — это билет в закрытый мир. Один раз получаешь доступ, дальше всё зависит от того, какую историю ты построишь.</p>
-      </div>
-      <div class="passes">
-        <article class="pass reveal">
-          <div class="pass-icon">⛏</div>
-          <h3>Starter</h3>
-          <div class="price">199 ₴ <small>/ навсегда</small></div>
-          <ul>
-            <li><span class="check">✓</span> Whitelist и вход на сервер</li>
-            <li><span class="check">✓</span> Базовый стартовый набор</li>
-            <li><span class="check">✓</span> Закрытый Discord</li>
-            <li><span class="check">✓</span> Своя территория</li>
-          </ul>
-          <button class="btn" onclick="openPurchase('Starter','199 ₴')">Выбрать</button>
-        </article>
-
-        <article class="pass featured reveal">
-          <span class="pill">самый выбираемый</span>
-          <div class="pass-icon">◆</div>
-          <h3>Premium</h3>
-          <div class="price">399 ₴ <small>/ навсегда</small></div>
-          <ul>
-            <li><span class="check">✓</span> Всё из Starter</li>
-            <li><span class="check">✓</span> Роль Premium + префикс</li>
-            <li><span class="check">✓</span> Косметические бонусы</li>
-            <li><span class="check">✓</span> Приоритетная очередь</li>
-          </ul>
-          <button class="btn btn-main" onclick="openPurchase('Premium','399 ₴')">Выбрать Premium</button>
-        </article>
-
-        <article class="pass reveal">
-          <div class="pass-icon">✦</div>
-          <h3>Creator</h3>
-          <div class="price">699 ₴ <small>/ навсегда</small></div>
-          <ul>
-            <li><span class="check">✓</span> Всё из Premium</li>
-            <li><span class="check">✓</span> Creator-роль</li>
-            <li><span class="check">✓</span> Больше косметических эффектов</li>
-            <li><span class="check">✓</span> Возможности для больших проектов</li>
-          </ul>
-          <button class="btn" onclick="openPurchase('Creator','699 ₴')">Выбрать</button>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="container">
-      <div class="cta reveal">
-        <div class="cta-meta">SERVER STATUS · <b>ONLINE</b></div>
-        <h2>Здесь можно построить<br>что-то настоящее.</h2>
-        <p>Не просто ещё одна база в очередном вайпе. Построй место, куда другие игроки захотят прийти.</p>
-        <div class="cta-actions">
-          <button class="btn btn-main" onclick="scrollToId('passes')">Получить проходку</button>
-          <button class="btn" onclick="openDiscord()">Открыть Discord</button>
+        <!-- Ссылки -->
+        <div class="card">
+            <h2>Контакты</h2>
+            <p>Наш Discord сервер для общения и жалоб: <a href="#" style="color: #4CAF50;">ссылка_на_дискорд</a></p>
         </div>
-      </div>
     </div>
-  </section>
 
-  <section id="faq">
-    <div class="container">
-      <div class="head reveal">
-        <div><h2>FAQ</h2></div>
-        <p>Заготовка для вопросов игроков. Здесь же можно разместить реальные правила проекта и контакты администрации.</p>
-      </div>
-      <div class="faq">
-        <details class="reveal"><summary>Как попасть на сервер?</summary><p>Оформи проходку, после подтверждения покупки игроку можно автоматически выдать whitelist и отправить инструкции для входа.</p></details>
-        <details class="reveal"><summary>Можно ли создать свой город?</summary><p>Да. Несколько игроков могут объединиться, выбрать общую территорию и развивать её как поселение или город.</p></details>
-        <details class="reveal"><summary>Что происходит после покупки?</summary><p>В рабочей версии сайта checkout должен отправить подтверждённую покупку на backend, а backend — выдать доступ и при необходимости роль Discord.</p></details>
-        <details class="reveal"><summary>Можно ли строить рядом с другими?</summary><p>Лучше оставить свободные границы и договариваться с соседями. Конкретные правила территории зависят от того, как ты настроишь сервер.</p></details>
-      </div>
-    </div>
-  </section>
-</main>
+    <footer>
+        <p>&copy; 2026 Твой Minecraft Сервер. Все права защищены.</p>
+    </footer>
 
-<footer class="footer">
-  <div class="container footer-in">
-    <div>© 2026 VOIDCRAFT · закрытый survival-проект</div>
-    <div class="footer-links"><a href="#world">Про сервер</a><a href="#passes">Доступ</a><a href="#faq">FAQ</a><a href="#top">Наверх ↑</a></div>
-  </div>
-</footer>
+    <script>
+        function copyIP() {
+            const ipText = document.getElementById("server-ip").innerText;
+            navigator.clipboard.writeText(ipText).then(() => {
+                alert("IP-адрес скопирован в буфер обмена!");
+            });
+        }
+    </script>
 
-<button class="back-top" id="backTop" onclick="toTop()" aria-label="Наверх">↑</button>
-<div class="toast" id="toast">Готово</div>
-
-<div class="modal" id="modal" onclick="backdrop(event)">
-  <div class="modal-box">
-    <div class="modal-top"><h3 id="modalTitle">Оформление доступа</h3><button class="close" onclick="closeModal()">×</button></div>
-    <div class="steps-modal" id="modalSteps"></div>
-    <div class="notice">Демо-режим: настоящий платёж и автоматическая выдача whitelist подключаются через backend.</div>
-    <div class="modal-actions"><button class="btn" onclick="closeModal()">Закрыть</button><button class="btn btn-main" onclick="demoBuy()">Продолжить</button></div>
-  </div>
-</div>
-
-<script>
-  const tabData = {
-    building:["Строй красиво и со смыслом","Не мешай соседям и уважай общие зоны. Большие проекты обсуждаются заранее, чтобы мир оставался цельным."],
-    territory:["Уважай границы","Чужие постройки и защищённые территории нельзя трогать. Свой участок можно развивать и передавать по правилам сервера."],
-    economy:["Деньги должны работать","Торговля и обмен создают жизнь на сервере. Магазины, фермы и услуги могут стать основой экономики города."],
-    community:["Сервер — это люди","Не только блоки важны. Уважай других игроков, договаривайся и помогай делать мир интереснее."]
-  };
-
-  document.querySelectorAll(".tab").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-      btn.classList.add("active");
-      const [title,desc]=tabData[btn.dataset.tab];
-      document.getElementById("tabContent").innerHTML=`<strong>${title}</strong><span>${desc}</span>`;
-    });
-  });
-
-  function scrollToId(id){document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"})}
-
-  document.querySelectorAll('a[href^="#"]').forEach(a=>{
-    a.addEventListener("click",e=>{
-      const t=document.querySelector(a.getAttribute("href"));
-      if(!t)return;
-      e.preventDefault();
-      t.scrollIntoView({behavior:"smooth",block:"start"});
-      history.replaceState(null,"",a.getAttribute("href"));
-    });
-  });
-
-  const progress=document.getElementById("progress");
-  const backTop=document.getElementById("backTop");
-  function updateScroll(){
-    const max=document.documentElement.scrollHeight-window.innerHeight;
-    progress.style.transform=`scaleX(${max>0?window.scrollY/max:0})`;
-    backTop.classList.toggle("show",window.scrollY>540);
-  }
-  window.addEventListener("scroll",updateScroll,{passive:true});updateScroll();
-
-  function toTop(){window.scrollTo({top:0,behavior:"smooth"})}
-
-  const revealObserver=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible")});
-  },{threshold:.12,rootMargin:"0px 0px -35px 0px"});
-  document.querySelectorAll(".reveal").forEach(el=>revealObserver.observe(el));
-
-  const navLinks=[...document.querySelectorAll(".nav-links a")];
-  const sections=[...document.querySelectorAll("main section[id]")];
-  const navObserver=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting)navLinks.forEach(a=>a.classList.toggle("active",a.getAttribute("href")==="#"+e.target.id));
-    });
-  },{rootMargin:"-35% 0px -55% 0px"});
-  sections.forEach(s=>navObserver.observe(s));
-
-  const heroCard=document.getElementById("heroCard");
-  if(window.matchMedia("(pointer:fine)").matches){
-    heroCard.addEventListener("pointermove",e=>{
-      const r=heroCard.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
-      heroCard.style.transform=`perspective(900px) rotateX(${(-y*2).toFixed(2)}deg) rotateY(${(x*2).toFixed(2)}deg)`;
-    });
-    heroCard.addEventListener("pointerleave",()=>heroCard.style.transform="");
-  }
-
-  async function copyIP(){
-    try{await navigator.clipboard.writeText(document.getElementById("ipText").textContent);toast("IP сервера скопирован")}
-    catch(e){toast("IP: play.voidcraft.ru")}
-  }
-
-  function toast(message){
-    const t=document.getElementById("toast");t.textContent=message;t.classList.add("show");
-    clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove("show"),2100);
-  }
-
-  function openPurchase(plan,price){
-    document.getElementById("modalTitle").textContent=plan+" · "+price;
-    document.getElementById("modalSteps").innerHTML=`
-      <div class="mstep"><span class="mnum">1</span><div><b>Выбрана проходка ${plan}</b><span>Стоимость: ${price}. Доступ выдаётся навсегда.</span></div></div>
-      <div class="mstep"><span class="mnum">2</span><div><b>Оплата</b><span>На продакшене здесь откроется настоящий checkout платёжного провайдера.</span></div></div>
-      <div class="mstep"><span class="mnum">3</span><div><b>Добро пожаловать</b><span>После оплаты backend может автоматически добавить игрока в whitelist и отправить инструкции.</span></div></div>`;
-    document.getElementById("modal").classList.add("show");document.body.style.overflow="hidden";
-  }
-  function demoBuy(){closeModal();toast("Демо: checkout готов к подключению")}
-  function closeModal(){document.getElementById("modal").classList.remove("show");document.body.style.overflow=""}
-  function backdrop(e){if(e.target.id==="modal")closeModal()}
-  function openDiscord(){toast("Добавь сюда свою ссылку Discord");}
-  document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
-
-  let online=37;
-  setInterval(()=>{
-    online=Math.max(18,Math.min(52,online+(Math.random()>.5?1:-1)));
-    document.getElementById("online").textContent=online;
-  },4500);
-</script>
 </body>
 </html>

@@ -3,143 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой Minecraft Сервер</title>
+    <title>Phant0mMC — Лучший сервер выживания</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-dark: #09060f;
+            --card-bg: rgba(18, 12, 28, 0.7);
+            --primary: #9333ea;
+            --primary-glow: rgba(147, 51, 234, 0.4);
+            --accent: #c084fc;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Outfit', sans-serif;
         }
+
         body {
-            background-color: #121212;
-            color: #e0e0e0;
-            line-height: 1.6;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
         }
+
+        /* Фоновые неоновые свечения */
+        .bg-glow {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            filter: blur(150px);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.25;
+        }
+        .glow-1 { top: -100px; left: -100px; }
+        .glow-2 { bottom: 10%; right: -100px; background: #6b21a8; }
+
         header {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=1000&auto=format&fit=crop') no-repeat center center/cover;
-            height: 60vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             text-align: center;
-            padding: 0 20px;
+            padding: 80px 20px 40px 20px;
         }
+
         header h1 {
-            font-size: 3rem;
-            color: #4CAF50;
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            text-shadow: 0 0 30px var(--primary-glow);
         }
+
         header p {
             font-size: 1.2rem;
+            color: var(--text-muted);
             max-width: 600px;
+            margin: 0 auto;
         }
+
         .container {
-            max-width: 800px;
-            margin: -40px auto 40px auto;
-            padding: 20px;
+            max-width: 850px;
+            margin: 0 auto 60px auto;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
         }
+
         .card {
-            background: #1e1e1e;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            margin-bottom: 25px;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(147, 51, 234, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, border-color 0.3s ease;
         }
+
+        .card:hover {
+            border-color: rgba(147, 51, 234, 0.5);
+            transform: translateY(-2px);
+        }
+
         .card h2 {
-            color: #4CAF50;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #333;
-            padding-bottom: 8px;
+            color: var(--accent);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .ip-box {
-            background: #2d2d2d;
-            padding: 15px;
-            border-radius: 5px;
+
+        /* Блок IP */
+        .ip-wrapper {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #fff;
-            border: 1px dashed #4CAF50;
+            background: rgba(9, 6, 15, 0.6);
+            border: 1px dashed var(--primary);
+            padding: 16px 20px;
+            border-radius: 12px;
+            gap: 15px;
+            flex-wrap: wrap;
         }
-        .ip-box button {
-            background: #4CAF50;
+
+        .ip-address {
+            font-family: monospace;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, var(--primary), #7c3aed);
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--primary-glow);
         }
-        .ip-box button:hover {
-            background: #45a049;
+
+        .copy-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(147, 51, 234, 0.6);
+        }
+
+        /* Новости */
+        .news-item {
+            margin-bottom: 15px;
+        }
+        .news-item:last-child {
+            margin-bottom: 0;
+        }
+        .news-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .news-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 6px;
         }
         ul {
             padding-left: 20px;
+            color: var(--text-muted);
         }
         li {
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
+
+        /* Уведомление о копировании */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #181028;
+            border: 1px solid var(--primary);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
         footer {
             text-align: center;
-            padding: 20px;
-            color: #777;
+            padding: 30px;
+            color: var(--text-muted);
             font-size: 0.9rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
 
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
+
     <header>
-        <h1>Название Сервера</h1>
-        <p>Лучшее выживание, крутые плагины и уютное сообщество жгут тебя!</p>
+        <h1>Phant0mMC</h1>
+        <p>Погрузись в мистический мир выживания. Уникальные плагины, крутое сообщество и незабываемые приключения ждут тебя!</p>
     </header>
 
     <div class="container">
         <!-- Блок подключения -->
         <div class="card">
-            <h2>IP-адрес сервера</h2>
-            <p style="margin-bottom: 10px;">Скопируй адрес и заходи играть (Версия: 1.20+):</p>
-            <div class="ip-box">
-                <span id="server-ip">Твой_Сервер.aternos.me:Порт</span>
-                <button onclick="copyIP()">Скопировать</button>
+            <h2>⚡ Подключение к серверу</h2>
+            <p style="margin-bottom: 15px; color: var(--text-muted);">Скопируй IP-адрес и заходи в игру (Версия: 1.20+):</p>
+            <div class="ip-wrapper">
+                <span class="ip-address" id="server-ip">Phant0mMC.aternos.me:12345</span>
+                <button class="copy-btn" onclick="copyIP()">Скопировать IP</button>
             </div>
         </div>
 
         <!-- Новости -->
         <div class="card">
-            <h2>Новости и обновления</h2>
-            <p><strong>📌 Обновление v1.0 (Сегодня):</strong></p>
-            <ul>
-                <li>Сервер успешно запущен и работает!</li>
-                <li>Добавлены плагины на приваты и защиту территории.</li>
-                <li>Настроена экономика и магазин на спавне.</li>
-            </ul>
+            <h2>📌 Новости и обновления</h2>
+            <div class="news-item">
+                <div class="news-date">Сегодня</div>
+                <div class="news-title">Сервер Phant0mMC успешно открыт! 🎉</div>
+                <ul>
+                    <li>Запущено классическое выживание с кастомными фишками.</li>
+                    <li>Доступны приват территорий и экономика.</li>
+                    <li>Ждем каждого на открытии!</li>
+                </ul>
+            </div>
         </div>
 
         <!-- Ссылки -->
         <div class="card">
-            <h2>Контакты</h2>
-            <p>Наш Discord сервер для общения и жалоб: <a href="#" style="color: #4CAF50;">ссылка_на_дискорд</a></p>
+            <h2>💬 Сообщество</h2>
+            <p>Есть вопросы или хочешь найти тиммейтов? Залетай в наш <a href="#" target="_blank">Discord-сервер</a>!</p>
         </div>
     </div>
 
     <footer>
-        <p>&copy; 2026 Твой Minecraft Сервер. Все права защищены.</p>
+        <p>&copy; 2026 Phant0mMC. Неофициальный сервер Minecraft.</p>
     </footer>
+
+    <!-- Всплывающее уведомление -->
+    <div class="toast" id="toast">IP-адрес скопирован! ✨</div>
 
     <script>
         function copyIP() {
             const ipText = document.getElementById("server-ip").innerText;
             navigator.clipboard.writeText(ipText).then(() => {
-                alert("IP-адрес скопирован в буфер обмена!");
+                const toast = document.getElementById("toast");
+                toast.classList.add("show");
+                setTimeout(() => {
+                    toast.classList.remove("show");
+                }, 2500);
             });
         }
     </script>
-
 </body>
 </html>

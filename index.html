@@ -1,253 +1,586 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SurvivalInKaif — Minecraft Server</title>
+    <title>SurvivalInKaif — Официальный сайт сервера Minecraft</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Press Start 2P for Minecraft Vibe -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        mc: {
+                            green: '#22c55e',
+                            greenDark: '#15803d',
+                            bg: '#0f172a',
+                            card: '#1e293b',
+                            border: '#334155',
+                            gold: '#fbbf24',
+                            red: '#ef4444'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        pixel: ['"Press Start 2P"', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --bg-color: #121214;
-            --card-bg: #1e1e24;
-            --accent-color: #22c55e;
-            --accent-hover: #16a34a;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+            background-color: #0b0f19;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(34, 197, 94, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.8) 0px, transparent 50%);
+            background-attachment: fixed;
         }
 
-        header {
-            text-align: center;
-            margin-top: 40px;
-            margin-bottom: 30px;
+        .minecraft-btn {
+            box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.35), inset 4px 4px 0px 0px rgba(255,255,255,0.2);
+            transition: all 0.1s ease;
+        }
+        .minecraft-btn:active {
+            box-shadow: inset 2px 2px 0px 0px rgba(0,0,0,0.35);
+            transform: translateY(2px);
         }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: var(--accent-color);
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        .pulse-online {
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            animation: pulse-green 2s infinite;
+        }
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
         }
 
-        .server-ip-box {
-            background: var(--card-bg);
-            padding: 15px 25px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            border: 1px solid #333;
-            margin-bottom: 40px;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
-
-        .ip-text {
-            font-size: 1.2rem;
-            font-weight: bold;
-            font-family: monospace;
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
         }
-
-        .btn-copy {
-            background-color: var(--accent-color);
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
         }
-
-        .btn-copy:hover {
-            background-color: var(--accent-hover);
-        }
-
-        .container {
-            width: 100%;
-            max-width: 800px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 5px;
-            margin-bottom: 15px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #2d2d35;
-        }
-
-        .card h3 {
-            margin-bottom: 8px;
-            color: var(--accent-color);
-        }
-
-        .card .date {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-        }
-
-        .admin-panel {
-            margin-top: 50px;
-            background: #18181c;
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px dashed var(--accent-color);
-            width: 100%;
-            max-width: 800px;
-        }
-
-        .admin-panel h2 {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-        }
-
-        .admin-panel form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .admin-panel input, .admin-panel textarea, .admin-panel select {
-            background: #0f0f11;
-            border: 1px solid #333;
-            color: #fff;
-            padding: 10px;
-            border-radius: 6px;
-        }
-
-        .admin-panel button {
-            background: var(--accent-color);
-            border: none;
-            padding: 10px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            background: var(--accent-color);
-            color: #000;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: bold;
-            display: none;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #22c55e;
         }
     </style>
 </head>
-<body>
+<body class="text-slate-100 min-h-screen flex flex-col font-sans selection:bg-mc-green selection:text-black">
 
-    <header>
-        <h1>SurvivalInKaif</h1>
-        <p>Официальный сайт сервера Minecraft</p>
-    </header>
+    <nav class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-mc-green/20 border border-mc-green/50 rounded-lg flex items-center justify-center text-mc-green text-xl font-bold font-pixel shadow-lg shadow-mc-green/10">
+                    S
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight tracking-wide text-white">SurvivalInKaif</h1>
+                    <p class="text-xs text-slate-400">Aternos Minecraft Server</p>
+                </div>
+            </div>
 
-    <div class="server-ip-box">
-        <span class="ip-text" id="serverIp">SurvivalInKaif.aternos.me:50723</span>
-        <button class="btn-copy" onclick="copyIp()">Скопировать IP</button>
+            <div class="flex items-center gap-3">
+                <!-- Status Badge -->
+                <div class="hidden sm:flex items-center gap-2 bg-slate-800/80 border border-slate-700/60 rounded-full px-3 py-1.5 text-xs font-medium">
+                    <span class="w-2.5 h-2.5 rounded-full bg-mc-green pulse-online"></span>
+                    <span class="text-slate-300">Aternos Online</span>
+                </div>
+
+                <!-- Admin Status Indicator if logged in -->
+                <div id="adminBadge" class="hidden items-center gap-2 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-full px-3 py-1 text-xs font-medium">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>Администратор</span>
+                    <button onclick="logoutAdmin()" class="ml-1 text-slate-400 hover:text-white" title="Выйтииз админки">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8 flex flex-col gap-8">
+        
+        <!-- Hero Banner -->
+        <section class="relative bg-gradient-to-b from-slate-800/80 to-slate-900/90 border border-slate-700/60 rounded-2xl p-6 sm:p-10 text-center shadow-2xl overflow-hidden">
+            <!-- Decorative Glow -->
+            <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-mc-green/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <span class="inline-block px-3 py-1 bg-mc-green/10 text-mc-green border border-mc-green/30 text-xs font-bold uppercase tracking-wider rounded-full mb-3">
+                Версия: PaperMC 1.20+
+            </span>
+            <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-3 font-pixel leading-tight">
+                SURVIVAL<span class="text-mc-green">IN</span>KAIF
+            </h2>
+            <p class="text-slate-400 max-w-lg mx-auto text-sm sm:text-base mb-6">
+                Выживание с друзьями в кайф! Скопируй IP ниже, запускай сервер и подключайся к нам прямо сейчас.
+            </p>
+
+            <!-- IP Copy Widget -->
+            <div class="max-w-md mx-auto bg-slate-950/80 border border-slate-700/80 rounded-xl p-2.5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-inner">
+                <div class="flex items-center gap-3 px-3 py-1">
+                    <i class="fa-solid fa-server text-mc-green text-lg"></i>
+                    <div class="text-left">
+                        <div class="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Адрес сервера</div>
+                        <div id="serverIpText" class="font-mono text-sm sm:text-base font-bold text-slate-100 select-all">SurvivalInKaif.aternos.me:50723</div>
+                    </div>
+                </div>
+
+                <button id="copyBtn" onclick="copyServerIp()" class="w-full sm:w-auto minecraft-btn bg-mc-green hover:bg-mc-greenDark text-slate-950 font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all">
+                    <i class="fa-solid fa-copy"></i>
+                    <span id="copyBtnText">Скопировать IP</span>
+                </button>
+            </div>
+            
+            <!-- Online status mobile display -->
+            <div class="flex sm:hidden items-center justify-center gap-2 mt-4 text-xs text-slate-400">
+                <span class="w-2 h-2 rounded-full bg-mc-green"></span>
+                <span>Aternos Server Host</span>
+            </div>
+        </section>
+
+        <section class="flex flex-col gap-5">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-newspaper text-mc-green text-xl"></i>
+                    <h3 class="text-xl font-bold tracking-wide">Новости и Ивенты</h3>
+                </div>
+
+                <!-- Filter Category Tabs -->
+                <div class="flex gap-1 bg-slate-900/80 p-1 border border-slate-800 rounded-lg text-xs">
+                    <button onclick="filterCategory('all')" id="tab-all" class="filter-tab px-3 py-1 rounded-md font-medium text-white bg-slate-800 transition">Все</button>
+                    <button onclick="filterCategory('Новость')" id="tab-news" class="filter-tab px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white transition">Новости</button>
+                    <button onclick="filterCategory('Ивент')" id="tab-event" class="filter-tab px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white transition">Ивенты</button>
+                    <button onclick="filterCategory('Тех. работы')" id="tab-tech" class="filter-tab px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white transition">Тех. работы</button>
+                </div>
+            </div>
+
+            <div id="postsList" class="space-y-4">
+                <!-- Skeleton Loading -->
+                <div class="animate-pulse bg-slate-800/40 border border-slate-800 rounded-xl p-5 space-y-3">
+                    <div class="h-4 bg-slate-700/50 rounded w-1/4"></div>
+                    <div class="h-6 bg-slate-700/50 rounded w-3/4"></div>
+                    <div class="h-16 bg-slate-700/30 rounded w-full"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="adminPanelSection" class="hidden border border-amber-500/30 bg-slate-900/90 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-5">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-white">Панель управления создателя</h3>
+                        <p class="text-xs text-amber-400/80">Доступно только владельцу сервера</p>
+                    </div>
+                </div>
+                <button onclick="logoutAdmin()" class="text-xs text-slate-400 hover:text-red-400 flex items-center gap-1 transition">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>Выйти</span>
+                </button>
+            </div>
+
+            <!-- Create Post Form -->
+            <form id="createPostForm" onsubmit="handleCreatePost(event)" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Заголовок объявления</label>
+                        <input type="text" id="postTitle" required placeholder="Например: ПВП Ивент в эту субботу!" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-mc-green transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Категория</label>
+                        <select id="postCategory" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-mc-green transition">
+                            <option value="Новость">📢 Новость</option>
+                            <option value="Ивент">⚔️ Ивент</option>
+                            <option value="Тех. работы">🛠️ Тех. работы</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Содержание поста</label>
+                    <textarea id="postContent" rows="4" required placeholder="Подробно опишите новости, правила ивента или время проведения..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-mc-green transition resize-y"></textarea>
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="submit" id="submitPostBtn" class="minecraft-btn bg-mc-green hover:bg-mc-greenDark text-slate-950 font-bold px-6 py-2.5 rounded-lg text-sm flex items-center gap-2 transition">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Опубликовать для всех</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+    </main>
+
+    <footer class="mt-auto border-t border-slate-800/80 bg-slate-950/60 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div>
+                © 2026 SurvivalInKaif Server. Все права защищены.
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <!-- Secret Admin Login Trigger Button -->
+                <button onclick="openAdminModal()" class="text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5" title="Вход для владельца">
+                    <i class="fa-solid fa-user-lock text-xs"></i>
+                    <span>Админ-вход</span>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <div id="adminAuthModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700/80 rounded-2xl max-w-sm w-full p-6 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="text-center mb-5">
+                <div class="w-12 h-12 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-xl mx-auto flex items-center justify-center text-xl mb-3">
+                    <i class="fa-solid fa-key"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white">Вход для владельца</h3>
+                <p class="text-xs text-slate-400 mt-1">Введите пароль администратора для управления новостями</p>
+            </div>
+
+            <form onsubmit="handleAdminAuth(event)" class="space-y-4">
+                <div>
+                    <input type="password" id="adminPasswordInput" placeholder="Пароль администратора" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 transition text-center tracking-widest">
+                    <p id="authErrorMsg" class="text-red-400 text-xs text-center mt-2 hidden">Неверный пароль!</p>
+                </div>
+
+                <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-lg text-sm transition">
+                    Войти в систему
+                </button>
+            </form>
+            <p class="text-[10px] text-center text-slate-500 mt-4">Стандартный пароль: <code class="text-slate-400">1234</code></p>
+        </div>
     </div>
 
-    <div class="container">
-        <h2 class="section-title">Новости и Ивенты</h2>
-        <div id="postsContainer"></div>
-    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    <!-- Панель администратора (сохраняет записи в браузере) -->
-    <div class="admin-panel">
-        <h2>Панель управления (для владельца)</h2>
-        <form id="addPostForm">
-            <input type="text" id="postTitle" placeholder="Заголовок новости/ивента" required>
-            <select id="postType">
-                <option value="Новость">Новость</option>
-                <option value="Ивент">Ивент</option>
-            </select>
-            <textarea id="postContent" rows="4" placeholder="Текст объявления..." required></textarea>
-            <button type="submit">Опубликовать</button>
-        </form>
-    </div>
+        // Firebase Configuration & Setup
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'survivalinkaif-server-app';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : {
+                apiKey: "demo-api-key",
+                authDomain: "demo.firebaseapp.com",
+                projectId: "demo-project",
+                storageBucket: "demo.appspot.com",
+                messagingSenderId: "123456789",
+                appId: "1:123456789:web:123456"
+            };
 
-    <div class="toast" id="toast">IP скопирован в буфер обмена!</div>
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-    <script>
+        // State Variables
+        let currentUser = null;
+        let allPosts = [];
+        let currentFilter = 'all';
+        let isAdminLoggedIn = false;
+
+        // Default initial posts if database is empty
         const defaultPosts = [
             {
-                title: "Открытие сервера!",
-                type: "Новость",
-                date: "20.09.2026",
-                content: "Добро пожаловать на сервер SurvivalInKaif! Подключайтесь по IP выше и играйте вместе с нами."
+                id: 'default-1',
+                title: 'Добро пожаловать на SurvivalInKaif!',
+                category: 'Новость',
+                content: 'Сервер успешно запущен на базе PaperMC! Собирайте друзей, копируйте IP выше и приступайте к выживанию.',
+                createdAt: new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
+            },
+            {
+                id: 'default-2',
+                title: 'Первый турнир по ПВП в Ближайшее время',
+                category: 'Ивент',
+                content: 'Готовьте свою алмазную броню! Скоро мы проведем первый турнир на спавне с крутыми призами.',
+                createdAt: new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
             }
         ];
 
-        function loadPosts() {
-            const saved = localStorage.getItem('server_posts');
-            const posts = saved ? JSON.parse(saved) : defaultPosts;
-            const container = document.getElementById('postsContainer');
+        async function initAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    const userCredential = await signInWithCustomToken(auth, __initial_auth_token);
+                    currentUser = userCredential.user;
+                } else {
+                    const userCredential = await signInAnonymously(auth);
+                    currentUser = userCredential.user;
+                }
+                listenToPosts();
+            } catch (error) {
+                console.error("Auth error:", error);
+                // Fallback to local rendering
+                renderPosts(defaultPosts);
+            }
+        }
+
+        // Listen for realtime posts from Cloud Firestore
+        function listenToPosts() {
+            if (!currentUser) return;
+
+            const postsRef = collection(db, 'artifacts', appId, 'public', 'data', 'posts');
+
+            onSnapshot(postsRef, (snapshot) => {
+                if (snapshot.empty) {
+                    allPosts = defaultPosts;
+                } else {
+                    allPosts = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                }
+                renderPosts(allPosts);
+            }, (error) => {
+                console.warn("Firestore error, falling back to cached posts:", error);
+                renderPosts(defaultPosts);
+            });
+        }
+
+        window.renderPosts = function(postsToRender) {
+            const container = document.getElementById('postsList');
             container.innerHTML = '';
 
-            posts.forEach((post, index) => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <h3>[${post.type}] ${post.title}</h3>
-                    <div class="date">${post.date}</div>
-                    <p>${post.content}</p>
+            let filtered = postsToRender;
+            if (currentFilter !== 'all') {
+                filtered = postsToRender.filter(p => p.category === currentFilter);
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 bg-slate-900/40 border border-slate-800 rounded-xl">
+                        <i class="fa-solid fa-folder-open text-slate-600 text-3xl mb-2"></i>
+                        <p class="text-slate-400 text-sm">В этой категории пока нет записей</p>
+                    </div>
                 `;
-                container.appendChild(card);
+                return;
+            }
+
+            filtered.forEach(post => {
+                const categoryBadge = getCategoryBadgeHTML(post.category);
+                const isOwner = isAdminLoggedIn;
+
+                const cardHtml = `
+                    <article class="bg-slate-900/80 border border-slate-800 hover:border-slate-700/80 rounded-xl p-5 transition-all duration-200 relative group">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <div class="flex items-center gap-2">
+                                ${categoryBadge}
+                                <span class="text-xs text-slate-500"><i class="fa-regular fa-clock mr-1"></i>${post.createdAt || 'Только что'}</span>
+                            </div>
+
+                            ${isOwner ? `
+                                <button onclick="deletePost('${post.id}')" class="text-xs text-slate-500 hover:text-red-400 p-1.5 rounded-md hover:bg-red-500/10 transition" title="Удалить новость">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+
+                        <h4 class="text-lg font-bold text-slate-100 mb-2 leading-snug">${escapeHtml(post.title)}</h4>
+                        <p class="text-slate-300 text-sm leading-relaxed whitespace-pre-line">${escapeHtml(post.content)}</p>
+                    </article>
+                `;
+                container.innerHTML += cardHtml;
             });
+        };
+
+        function getCategoryBadgeHTML(category) {
+            switch (category) {
+                case 'Ивент':
+                    return `<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-400"><i class="fa-solid fa-trophy mr-1"></i>Ивент</span>`;
+                case 'Тех. работы':
+                    return `<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-500/10 border border-red-500/30 text-red-400"><i class="fa-solid fa-wrench mr-1"></i>Тех. работы</span>`;
+                default:
+                    return `<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-mc-green/10 border border-mc-green/30 text-mc-green"><i class="fa-solid fa-bullhorn mr-1"></i>Новость</span>`;
+            }
         }
 
-        document.getElementById('addPostForm').addEventListener('submit', function(e) {
+        // Helper to escape HTML to prevent XSS
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        window.filterCategory = function(cat) {
+            currentFilter = cat;
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('bg-slate-800', 'text-white');
+                tab.classList.add('text-slate-400');
+            });
+            
+            const activeMap = {
+                'all': 'tab-all',
+                'Новость': 'tab-news',
+                'Ивент': 'tab-event',
+                'Тех. работы': 'tab-tech'
+            };
+            const activeTab = document.getElementById(activeMap[cat]);
+            if (activeTab) {
+                activeTab.classList.add('bg-slate-800', 'text-white');
+                activeTab.classList.remove('text-slate-400');
+            }
+
+            renderPosts(allPosts);
+        };
+
+        window.handleCreatePost = async function(e) {
             e.preventDefault();
-            const title = document.getElementById('postTitle').value;
-            const type = document.getElementById('postType').value;
-            const content = document.getElementById('postContent').value;
-            const date = new Date().toLocaleDateString('ru-RU');
+            const titleInput = document.getElementById('postTitle');
+            const categorySelect = document.getElementById('postCategory');
+            const contentInput = document.getElementById('postContent');
+            const submitBtn = document.getElementById('submitPostBtn');
 
-            const saved = localStorage.getItem('server_posts');
-            const posts = saved ? JSON.parse(saved) : [...defaultPosts];
+            const title = titleInput.value.trim();
+            const category = categorySelect.value;
+            const content = contentInput.value.trim();
 
-            posts.unshift({ title, type, date, content });
-            localStorage.setItem('server_posts', JSON.stringify(posts));
+            if (!title || !content) return;
 
-            this.reset();
-            loadPosts();
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Публикация...`;
+
+            const newPost = {
+                title,
+                category,
+                content,
+                createdAt: new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
+            };
+
+            try {
+                if (currentUser) {
+                    const postsRef = collection(db, 'artifacts', appId, 'public', 'data', 'posts');
+                    await addDoc(postsRef, newPost);
+                } else {
+                    allPosts.unshift({ id: 'local-' + Date.now(), ...newPost });
+                    renderPosts(allPosts);
+                }
+
+                // Reset form
+                titleInput.value = '';
+                contentInput.value = '';
+            } catch (err) {
+                console.error("Failed to create post:", err);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Опубликовать для всех`;
+            }
+        };
+
+        window.deletePost = async function(postId) {
+            if (!confirm("Вы уверены, что хотите удалить эту новость?")) return;
+
+            try {
+                if (currentUser && !postId.startsWith('default-') && !postId.startsWith('local-')) {
+                    const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'posts', postId);
+                    await deleteDoc(postRef);
+                } else {
+                    allPosts = allPosts.filter(p => p.id !== postId);
+                    renderPosts(allPosts);
+                }
+            } catch (err) {
+                console.error("Failed to delete post:", err);
+            }
+        };
+
+        window.openAdminModal = function() {
+            document.getElementById('adminAuthModal').classList.remove('hidden');
+            document.getElementById('adminPasswordInput').focus();
+        };
+
+        window.closeAdminModal = function() {
+            document.getElementById('adminAuthModal').classList.add('hidden');
+            document.getElementById('authErrorMsg').classList.add('hidden');
+            document.getElementById('adminPasswordInput').value = '';
+        };
+
+        window.handleAdminAuth = function(e) {
+            e.preventDefault();
+            const pwd = document.getElementById('adminPasswordInput').value;
+            
+            // Password Check (Default password: 1234)
+            if (pwd === '1234') {
+                isAdminLoggedIn = true;
+                closeAdminModal();
+                
+                // Show Admin Panel
+                document.getElementById('adminPanelSection').classList.remove('hidden');
+                document.getElementById('adminBadge').classList.remove('hidden');
+                document.getElementById('adminBadge').classList.add('flex');
+                
+                // Re-render posts to show delete buttons
+                renderPosts(allPosts);
+
+                // Scroll to Admin Panel
+                document.getElementById('adminPanelSection').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                document.getElementById('authErrorMsg').classList.remove('hidden');
+            }
+        };
+
+        window.logoutAdmin = function() {
+            isAdminLoggedIn = false;
+            document.getElementById('adminPanelSection').classList.add('hidden');
+            document.getElementById('adminBadge').classList.add('hidden');
+            document.getElementById('adminBadge').classList.remove('flex');
+            renderPosts(allPosts);
+        };
+
+        window.copyServerIp = function() {
+            const ip = "SurvivalInKaif.aternos.me:50723";
+            
+            // Clipboard fallback for frame context
+            const textArea = document.createElement("textarea");
+            textArea.value = ip;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+            const btn = document.getElementById('copyBtn');
+            const btnText = document.getElementById('copyBtnText');
+
+            btn.classList.remove('bg-mc-green', 'hover:bg-mc-greenDark');
+            btn.classList.add('bg-emerald-400');
+            btnText.innerText = "Скопировано!";
+
+            setTimeout(() => {
+                btn.classList.remove('bg-emerald-400');
+                btn.classList.add('bg-mc-green', 'hover:bg-mc-greenDark');
+                btnText.innerText = "Скопировать IP";
+            }, 2000);
+        };
+
+        // Hotkey shortcut: Ctrl + Shift + A to open admin modal
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a' || e.key === 'Ф' || e.key === 'ф')) {
+                e.preventDefault();
+                openAdminModal();
+            }
         });
 
-        function copyIp() {
-            const ip = document.getElementById('serverIp').innerText;
-            navigator.clipboard.writeText(ip).then(() => {
-                const toast = document.getElementById('toast');
-                toast.style.display = 'block';
-                setTimeout(() => { toast.style.display = 'none'; }, 2000);
-            });
-        }
-
-        loadPosts();
+        // Initialize on Load
+        initAuth();
     </script>
 </body>
 </html>

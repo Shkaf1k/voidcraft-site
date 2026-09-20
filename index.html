@@ -1,394 +1,310 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SurvivalInKaif — Сообщество и Сервер Minecraft</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            background-color: #0f172a;
-            color: #f8fafc;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-        }
-        .bg-card { background-color: #1e293b; }
-        .bg-card-hover:hover { background-color: #334155; }
-        .text-accent { color: #22c55e; }
-        .bg-accent { background-color: #22c55e; }
-        .bg-accent:hover { background-color: #16a34a; }
-        .border-accent { border-color: #22c55e; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SurvivalInKaif — Minecraft Community</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root{--bg:#070b12;--panel:#0f1724;--panel2:#141f30;--line:#223047;--green:#22c55e;--green2:#16a34a}
+html{scroll-behavior:smooth}body{background:radial-gradient(circle at 50% -10%,#17263a 0,#070b12 42%);color:#f8fafc;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}.glass{background:rgba(15,23,36,.82);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.06)}
+.card{background:linear-gradient(145deg,#111b2a,#0d1522);border:1px solid var(--line);box-shadow:0 18px 60px rgba(0,0,0,.18)}
+.btn{transition:.18s ease}.btn:hover{transform:translateY(-1px)}.btn:active{transform:scale(.98)}
+.input{width:100%;background:#0a111d;border:1px solid #243249;border-radius:14px;padding:12px 14px;color:#fff;outline:none}
+.input:focus{border-color:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.1)}
+.avatar{object-fit:cover;background:#0a111d}.banner{background-size:cover;background-position:center}
+::-webkit-scrollbar{width:9px}::-webkit-scrollbar-thumb{background:#26354b;border-radius:99px}
+.hidden-view{display:none!important}.fade{animation:fade .2s ease}@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+</style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen">
 
-    <!-- Навигация -->
-    <nav class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('feed')">
-                <div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center text-slate-950 font-black text-xl">S</div>
-                <span class="font-extrabold text-xl tracking-wider text-white">Survival<span class="text-accent">InKaif</span></span>
-            </div>
-            
-            <div class="flex items-center gap-3" id="navAuthSection">
-                <!-- Заполняется динамически JS -->
-            </div>
-        </div>
-    </nav>
-
-    <!-- Основной контент -->
-    <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <!-- Левая колонка: Профиль и Сервер -->
-        <div class="space-y-6">
-            
-            <!-- Карточка Сервера -->
-            <div class="bg-card p-5 rounded-2xl border border-slate-800 shadow-lg text-center">
-                <div class="inline-flex items-center gap-2 bg-slate-900 px-3 py-1 rounded-full text-xs font-semibold text-accent mb-3 border border-emerald-500/20">
-                    <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-                    PaperMC 1.20+
-                </div>
-                <h2 class="text-xl font-bold mb-1">Minecraft Сервер</h2>
-                <p class="text-xs text-slate-400 mb-4">Подключайся и играй вместе с друзьями!</p>
-                
-                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 flex items-center justify-between gap-2 mb-3">
-                    <span id="serverIpText" class="font-mono text-sm font-bold text-slate-200 select-all">SurvivalInKaif.aternos.me:50723</span>
-                    <button onclick="copyServerIp()" class="bg-accent text-slate-950 px-3 py-1.5 rounded-lg text-xs font-bold transition-all active:scale-95 flex items-center gap-1 shrink-0">
-                        <i class="fa-regular fa-copy"></i> Скопировать
-                    </button>
-                </div>
-            </div>
-
-            <!-- Виджет Профиля (если вошел) -->
-            <div id="sidebarProfile" class="hidden bg-card p-5 rounded-2xl border border-slate-800 shadow-lg text-center">
-                <img id="sidebarAvatar" src="https://crafatar.com/renders/head/steve?overlay" class="w-20 h-20 mx-auto mb-3 rounded-xl shadow-md border-2 border-accent" alt="Skin">
-                <h3 id="sidebarMcNick" class="font-bold text-lg text-white">...</h3>
-                <p id="sidebarEmail" class="text-xs text-slate-400 mb-4">...</p>
-            </div>
-
-        </div>
-
-        <!-- Центральная колонка: Лента / Посты -->
-        <div class="lg:col-span-2 space-y-6">
-            
-            <!-- Вкладки -->
-            <div class="flex gap-2 border-b border-slate-800 pb-2">
-                <button id="tabFeedBtn" onclick="switchTab('feed')" class="px-4 py-2 font-bold text-sm rounded-xl bg-accent text-slate-950">Лента Игроков</button>
-            </div>
-
-            <!-- Форма создания поста игрока (видны только авторизованным) -->
-            <div id="createPostBox" class="hidden bg-card p-4 rounded-2xl border border-slate-800 shadow-lg">
-                <div class="flex items-start gap-3">
-                    <img id="createPostAvatar" src="https://crafatar.com/renders/head/steve?overlay" class="w-10 h-10 rounded-lg shrink-0">
-                    <div class="flex-1 space-y-3">
-                        <textarea id="postText" rows="2" placeholder="Поделись скриншотом, видео или сообщением..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-accent resize-none"></textarea>
-                        
-                        <div class="flex flex-wrap gap-2">
-                            <input type="url" id="postMediaUrl" placeholder="Ссылка на скриншот или видео (YouTube)" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-accent">
-                        </div>
-
-                        <div class="flex justify-end">
-                            <button onclick="publishUserPost()" class="bg-accent text-slate-950 font-bold px-5 py-2 rounded-xl text-xs hover:opacity-90 transition">
-                                Опубликовать
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Контейнер для постов ленты -->
-            <div id="postsFeedContainer" class="space-y-4">
-                <div class="text-center py-10 text-slate-500">Загрузка постов...</div>
-            </div>
-
-        </div>
-
-    </main>
-
-    <!-- Модальное окно Входа / Регистрации -->
-    <div id="authModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="bg-card border border-slate-800 w-full max-w-md p-6 rounded-2xl shadow-2xl relative">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            
-            <div class="flex gap-4 mb-6 border-b border-slate-800 pb-2">
-                <button id="modalTabLogin" onclick="switchAuthMode('login')" class="font-bold text-lg text-accent border-b-2 border-accent pb-1">Вход</button>
-                <button id="modalTabRegister" onclick="switchAuthMode('register')" class="font-bold text-lg text-slate-400 pb-1">Регистрация</button>
-            </div>
-
-            <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
-                <div id="mcNickGroup" class="hidden">
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Игровой ник в Minecraft</label>
-                    <input type="text" id="authMcNick" placeholder="например: Stev1k" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-accent">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Email адрес</label>
-                    <input type="email" id="authEmail" required placeholder="your@email.com" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-accent">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Пароль</label>
-                    <input type="password" id="authPassword" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-accent">
-                </div>
-
-                <p id="authError" class="text-red-400 text-xs hidden"></p>
-
-                <button type="submit" id="authSubmitBtn" class="w-full bg-accent text-slate-950 font-bold py-3 rounded-xl text-sm hover:opacity-90 transition mt-2">
-                    Войти
-                </button>
-            </form>
-        </div>
+<nav class="sticky top-0 z-50 glass">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+    <button onclick="goHome()" class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-green-500 text-slate-950 font-black text-xl grid place-items-center shadow-lg shadow-green-500/10">S</div>
+      <div class="text-left">
+        <div class="font-black tracking-tight">Survival<span class="text-green-400">InKaif</span></div>
+        <div class="text-[10px] text-slate-500 uppercase tracking-[.2em]">Minecraft Community</div>
+      </div>
+    </button>
+    <div class="hidden md:flex items-center gap-2">
+      <button onclick="goHome()" class="px-3 py-2 rounded-xl text-sm text-slate-300 hover:bg-white/5">Главная</button>
+      <button onclick="scrollToPlayers()" class="px-3 py-2 rounded-xl text-sm text-slate-300 hover:bg-white/5">Игроки</button>
     </div>
+    <div id="navAuth"></div>
+  </div>
+</nav>
 
-    <!-- Уведомления (Toast) -->
-    <div id="toast" class="fixed bottom-5 right-5 bg-accent text-slate-950 px-4 py-2.5 rounded-xl font-bold text-xs shadow-xl hidden transition-all z-50">
-        Уведомление
+<main id="app" class="max-w-7xl mx-auto px-4 sm:px-6 py-7"></main>
+
+<!-- Auth -->
+<div id="authModal" class="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md hidden items-center justify-center p-4">
+  <div class="card w-full max-w-md rounded-3xl p-6 relative fade">
+    <button onclick="closeAuth()" class="absolute top-4 right-4 w-9 h-9 rounded-xl hover:bg-white/5 text-slate-400"><i class="fa-solid fa-xmark"></i></button>
+    <div class="mb-6">
+      <div class="text-xs text-green-400 font-bold uppercase tracking-widest">SurvivalInKaif</div>
+      <h2 id="authTitle" class="text-2xl font-black mt-1">Вход</h2>
+      <p id="authSub" class="text-sm text-slate-500 mt-1">Войди, чтобы получить доступ к серверу и профилю.</p>
     </div>
+    <div class="flex gap-2 mb-5 p-1 bg-black/20 rounded-xl">
+      <button id="loginTab" onclick="setAuthMode('login')" class="flex-1 py-2 rounded-lg bg-green-500 text-slate-950 text-sm font-bold">Вход</button>
+      <button id="regTab" onclick="setAuthMode('register')" class="flex-1 py-2 rounded-lg text-slate-400 text-sm font-bold">Регистрация</button>
+    </div>
+    <form onsubmit="submitAuth(event)" class="space-y-3">
+      <div id="nickWrap" class="hidden"><label class="text-xs text-slate-400">Minecraft ник</label><input id="authNick" class="input mt-1" maxlength="16" placeholder="Steve"></div>
+      <div><label class="text-xs text-slate-400">Email</label><input id="authEmail" type="email" required class="input mt-1" placeholder="you@example.com"></div>
+      <div><label class="text-xs text-slate-400">Пароль</label><input id="authPassword" type="password" minlength="6" required class="input mt-1" placeholder="Минимум 6 символов"></div>
+      <p id="authError" class="hidden text-sm text-red-400"></p>
+      <button id="authBtn" class="btn w-full bg-green-500 hover:bg-green-400 text-slate-950 py-3 rounded-xl font-black">Войти</button>
+    </form>
+  </div>
+</div>
 
-    <!-- Firebase SDK v9 -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, onSnapshot, doc, updateDoc, deleteDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+<!-- Settings -->
+<div id="settingsModal" class="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md hidden items-center justify-center p-4 overflow-y-auto">
+  <div class="card w-full max-w-2xl rounded-3xl p-6 relative fade my-8">
+    <button onclick="closeSettings()" class="absolute top-4 right-4 w-9 h-9 rounded-xl hover:bg-white/5 text-slate-400"><i class="fa-solid fa-xmark"></i></button>
+    <h2 class="text-2xl font-black">Настройки профиля</h2>
+    <p class="text-sm text-slate-500 mt-1 mb-6">Настрой, как тебя видят другие игроки.</p>
+    <div class="space-y-5">
+      <div>
+        <label class="text-xs text-slate-400">Баннер профиля</label>
+        <div id="bannerPreview" class="banner h-36 rounded-2xl mt-2 border border-slate-700 overflow-hidden flex items-center justify-center bg-slate-900">
+          <span class="text-slate-500 text-sm">Баннер не установлен</span>
+        </div>
+        <input id="bannerFile" type="file" accept="image/*" class="mt-2 block w-full text-xs text-slate-400">
+      </div>
+      <div class="grid sm:grid-cols-[120px_1fr] gap-5 items-center">
+        <div class="text-center">
+          <img id="avatarPreview" class="avatar w-24 h-24 rounded-2xl border-2 border-green-500 mx-auto">
+          <input id="avatarFile" type="file" accept="image/*" class="mt-2 w-full text-[10px] text-slate-500">
+        </div>
+        <div class="space-y-3">
+          <div><label class="text-xs text-slate-400">Minecraft ник</label><input id="profileNick" maxlength="16" class="input mt-1"></div>
+          <div><label class="text-xs text-slate-400">О себе</label><textarea id="profileBio" maxlength="240" rows="4" class="input mt-1 resize-none" placeholder="Расскажи немного о себе..."></textarea></div>
+        </div>
+      </div>
+      <p id="settingsError" class="hidden text-sm text-red-400"></p>
+      <div class="flex justify-end gap-2">
+        <button onclick="closeSettings()" class="px-4 py-2.5 rounded-xl text-sm text-slate-400 hover:bg-white/5">Отмена</button>
+        <button id="saveProfileBtn" onclick="saveProfile()" class="btn bg-green-500 hover:bg-green-400 text-slate-950 px-5 py-2.5 rounded-xl text-sm font-black">Сохранить</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-        // Твои конфиги из Firebase Console
-        const firebaseConfig = {
-            apiKey: "AIzaSyDvi1_IgnU7D6-ZG1r7ULxTJ2Ip7ucNPHo",
-            authDomain: "survivalinkaif.firebaseapp.com",
-            projectId: "survivalinkaif",
-            storageBucket: "survivalinkaif.firebasestorage.app",
-            messagingSenderId: "1031638928660",
-            appId: "1:1031638928660:web:86178899754cabfa590601",
-            measurementId: "G-ZJ7CJQQQGJ"
-        };
+<div id="toast" class="fixed bottom-5 right-5 z-[120] hidden bg-green-500 text-slate-950 px-4 py-3 rounded-xl font-bold text-sm shadow-2xl"></div>
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getFirestore,doc,getDoc,setDoc,collection,addDoc,query,onSnapshot,updateDoc,deleteDoc,arrayUnion,arrayRemove,serverTimestamp,orderBy} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import {getStorage,ref,uploadBytes,getDownloadURL} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js";
 
-        let currentUser = null;
-        let authMode = 'login';
+const firebaseConfig={
+ apiKey:"AIzaSyDvi1_IgnU7D6-ZG1r7ULxTJ2Ip7ucNPHo",
+ authDomain:"survivalinkaif.firebaseapp.com",
+ projectId:"survivalinkaif",
+ storageBucket:"survivalinkaif.firebasestorage.app",
+ messagingSenderId:"1031638928660",
+ appId:"1:1031638928660:web:86178899754cabfa590601",
+ measurementId:"G-ZJ7CJQQQGJ"
+};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),storage=getStorage(app);
+let currentUser=null,currentProfile=null,authMode="login",profileCache={};
+const fallbackAvatar="https://crafatar.com/renders/head/Steve?overlay";
+const defaultBanner="linear-gradient(135deg,#172033,#0b111c)";
 
-        // Отслеживание авторизации
-        onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            renderNav();
-            if (user) {
-                document.getElementById('createPostBox').classList.remove('hidden');
-                document.getElementById('sidebarProfile').classList.remove('hidden');
-                document.getElementById('sidebarMcNick').innerText = user.displayName || 'Игрок';
-                document.getElementById('sidebarEmail').innerText = user.email;
-                const skinUrl = `https://crafatar.com/renders/head/${user.displayName || 'steve'}?overlay`;
-                document.getElementById('sidebarAvatar').src = skinUrl;
-                document.getElementById('createPostAvatar').src = skinUrl;
-            } else {
-                document.getElementById('createPostBox').classList.add('hidden');
-                document.getElementById('sidebarProfile').classList.add('hidden');
-            }
-        });
+const $=id=>document.getElementById(id);
+function toast(msg){$("toast").textContent=msg;$("toast").classList.remove("hidden");clearTimeout(window.__toast);window.__toast=setTimeout(()=>$("toast").classList.add("hidden"),2800)}
+function esc(v=""){return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function avatar(p){return p?.avatarUrl||`https://crafatar.com/renders/head/${encodeURIComponent(p?.mcNick||"Steve")}?overlay`}
+function banner(p){return p?.bannerUrl||""}
 
-        // Навигация верхней панели
-        window.renderNav = () => {
-            const nav = document.getElementById('navAuthSection');
-            if (currentUser) {
-                nav.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <img src="https://crafatar.com/renders/head/${currentUser.displayName || 'steve'}?overlay" class="w-8 h-8 rounded-lg">
-                        <span class="text-xs font-bold text-white hidden sm:inline">${currentUser.displayName || 'Игрок'}</span>
-                        <button onclick="handleSignOut()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-semibold ml-2">Выйти</button>
-                    </div>
-                `;
-            } else {
-                nav.innerHTML = `
-                    <button onclick="openAuthModal('login')" class="text-xs font-bold text-slate-300 hover:text-white px-3 py-1.5">Вход</button>
-                    <button onclick="openAuthModal('register')" class="bg-accent text-slate-950 px-3 py-1.5 rounded-lg text-xs font-bold hover:opacity-90">Регистрация</button>
-                `;
-            }
-        };
+async function loadProfile(uid){
+ const snap=await getDoc(doc(db,"users",uid));
+ if(snap.exists()){profileCache[uid]=snap.data();return snap.data()}
+ return null;
+}
 
-        // Авторизация / Регистрация
-        window.handleAuthSubmit = async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('authEmail').value;
-            const password = document.getElementById('authPassword').value;
-            const mcNick = document.getElementById('authMcNick').value.trim();
-            const errorEl = document.getElementById('authError');
-            errorEl.classList.add('hidden');
+function nav(){
+ const n=$("navAuth");
+ if(!currentUser){n.innerHTML=`<div class="flex gap-2"><button onclick="openAuth('login')" class="px-3 py-2 text-sm text-slate-300">Войти</button><button onclick="openAuth('register')" class="bg-green-500 text-slate-950 px-4 py-2 rounded-xl text-sm font-black">Регистрация</button></div>`;return}
+ const p=currentProfile||{};
+ n.innerHTML=`<div class="flex items-center gap-2">
+   <button onclick="openProfile('${currentUser.uid}')" class="flex items-center gap-2 px-2 py-1 rounded-xl hover:bg-white/5">
+     <img src="${avatar(p)}" class="w-9 h-9 rounded-xl avatar border border-slate-700">
+     <span class="hidden sm:block text-sm font-bold">${esc(p.mcNick||currentUser.displayName||"Игрок")}</span>
+   </button>
+   <button onclick="openSettings()" class="w-9 h-9 rounded-xl text-slate-400 hover:bg-white/5" title="Настройки"><i class="fa-solid fa-gear"></i></button>
+   <button onclick="logout()" class="w-9 h-9 rounded-xl text-slate-400 hover:bg-white/5" title="Выйти"><i class="fa-solid fa-right-from-bracket"></i></button>
+ </div>`;
+}
 
-            try {
-                if (authMode === 'register') {
-                    if (!mcNick) throw new Error('Пожалуйста, укажи свой никнейм в Minecraft!');
-                    const res = await createUserWithEmailAndPassword(auth, email, password);
-                    await updateProfile(res.user, { displayName: mcNick });
-                    showToast('Успешная регистрация!');
-                } else {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    showToast('С возвращением!');
-                }
-                closeAuthModal();
-            } catch (err) {
-                errorEl.innerText = err.message;
-                errorEl.classList.remove('hidden');
-            }
-        };
+async function home(){
+ location.hash="";
+ $("app").innerHTML=`<div class="fade space-y-7">
+   <section class="relative overflow-hidden rounded-3xl border border-slate-800 card p-6 sm:p-10">
+     <div class="absolute -right-24 -top-24 w-72 h-72 rounded-full bg-green-500/10 blur-3xl"></div>
+     <div class="relative grid lg:grid-cols-[1.35fr_.65fr] gap-8 items-center">
+       <div>
+         <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold"><span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> PaperMC 1.20+</div>
+         <h1 class="text-4xl sm:text-6xl font-black tracking-tight mt-5">Survival<span class="text-green-400">InKaif</span></h1>
+         <p class="text-slate-400 mt-3 max-w-xl">Место, где собираются игроки, общаются, делятся моментами и заходят на свой Minecraft-сервер.</p>
+         <div class="flex flex-wrap gap-3 mt-7"><button onclick="copyServerIp()" class="btn bg-green-500 hover:bg-green-400 text-slate-950 px-5 py-3 rounded-xl font-black"><i class="fa-regular fa-copy mr-2"></i>Скопировать IP</button><button onclick="scrollToPlayers()" class="btn border border-slate-700 hover:bg-white/5 px-5 py-3 rounded-xl font-bold">Посмотреть игроков</button></div>
+       </div>
+       <div class="rounded-2xl bg-[#09101b] border border-slate-800 p-5">
+         <div class="text-xs text-slate-500 uppercase tracking-widest font-bold">Сервер</div>
+         <div class="flex items-center gap-2 mt-3"><span class="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></span><span id="serverStatus" class="font-bold">Проверяем доступ...</span></div>
+         <div id="serverIpBox" class="mt-5"></div>
+       </div>
+     </div>
+   </section>
+   <section id="playersSection">
+     <div class="flex items-end justify-between mb-4"><div><div class="text-xs text-green-400 font-bold uppercase tracking-widest">Community</div><h2 class="text-2xl font-black mt-1">Игроки</h2></div><span id="playerCount" class="text-xs text-slate-500"></span></div>
+     <div id="playersGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"><div class="text-slate-500">Загрузка...</div></div>
+   </section>
+   <section>
+     <div class="flex items-end justify-between mb-4"><div><div class="text-xs text-green-400 font-bold uppercase tracking-widest">Community feed</div><h2 class="text-2xl font-black mt-1">Лента</h2></div></div>
+     <div id="postsFeed" class="space-y-4"><div class="text-slate-500">Загрузка постов...</div></div>
+   </section>
+ </div>`;
+ await loadServer();
+ loadPlayers();
+ loadPosts();
+}
 
-        window.handleSignOut = () => {
-            signOut(auth);
-            showToast('Вы вышли из аккаунта');
-        };
+async function loadServer(){
+ if(!currentUser){$("serverStatus").textContent="Только для зарегистрированных";$("serverIpBox").innerHTML=`<button onclick="openAuth('register')" class="w-full bg-white/5 hover:bg-white/10 border border-slate-700 p-4 rounded-xl text-sm font-bold text-slate-300"><i class="fa-solid fa-lock mr-2 text-green-400"></i>Зарегистрируйся, чтобы получить IP</button>`;return}
+ try{
+  const s=await getDoc(doc(db,"servers","main"));
+  if(!s.exists()) throw new Error("SERVER_NOT_FOUND");
+  const d=s.data();
+  $("serverStatus").textContent=d.online===false?"Сервер офлайн":"Сервер доступен";
+  $("serverIpBox").innerHTML=`<div class="flex items-center gap-2 bg-black/30 border border-slate-800 rounded-xl p-2"><code id="ipValue" class="font-mono text-sm font-bold px-2 flex-1 truncate">${esc(d.address||"")}</code><button onclick="copyLoadedIp()" class="bg-green-500 text-slate-950 px-3 py-2 rounded-lg text-xs font-black"><i class="fa-regular fa-copy mr-1"></i>Копировать</button></div>`;
+ }catch(e){$("serverStatus").textContent="Не удалось загрузить сервер";$("serverIpBox").innerHTML=`<div class="text-xs text-red-400 bg-red-500/5 border border-red-500/10 rounded-xl p-3">Добавь документ <b>servers/main</b> в Firestore и разреши чтение только авторизованным.</div>`}
+}
+window.copyServerIp=()=>{if(!currentUser){openAuth("register");return}copyLoadedIp()};
+window.copyLoadedIp=async()=>{const ip=$("ipValue")?.textContent?.trim();if(!ip)return;await navigator.clipboard.writeText(ip);toast("IP скопирован!")}
+window.scrollToPlayers=()=>document.getElementById("playersSection")?.scrollIntoView({behavior:"smooth"});
 
-        // Публикация поста игроком
-        window.publishUserPost = async () => {
-            const text = document.getElementById('postText').value.trim();
-            const mediaUrl = document.getElementById('postMediaUrl').value.trim();
+async function loadPlayers(){
+ const grid=$("playersGrid"); if(!grid)return;
+ const q=query(collection(db,"users"));
+ onSnapshot(q,snap=>{
+  if(!snap.size){grid.innerHTML=`<div class="sm:col-span-2 lg:col-span-3 card rounded-2xl p-8 text-center text-slate-500">Пока нет зарегистрированных игроков.</div>`;return}
+  const arr=snap.docs.map(d=>({uid:d.id,...d.data()}));
+  $("playerCount").textContent=`${arr.length} ${arr.length===1?"игрок":"игроков"}`;
+  grid.innerHTML=arr.map(p=>`<button onclick="openProfile('${p.uid}')" class="card rounded-2xl overflow-hidden text-left hover:border-slate-600 transition">
+    <div class="h-20 banner" style="${p.bannerUrl?`background-image:url('${esc(p.bannerUrl)}')`: `background:${defaultBanner}`}"></div>
+    <div class="p-4 -mt-8 relative"><img src="${avatar(p)}" class="avatar w-16 h-16 rounded-2xl border-2 border-[#0d1522] shadow-xl"><div class="mt-2 font-black">${esc(p.mcNick||"Игрок")}</div><div class="text-xs text-slate-500 mt-1 line-clamp-2">${esc(p.bio||"Игрок SurvivalInKaif")}</div></div>
+  </button>`).join("");
+ },e=>{grid.innerHTML=`<div class="text-red-400">Ошибка загрузки игроков.</div>`});
+}
 
-            if (!text && !mediaUrl) {
-                showToast('Заполни текст или прикрепи ссылку!');
-                return;
-            }
+function loadPosts(){
+ const c=$("postsFeed"); if(!c)return;
+ const q=query(collection(db,"posts"));
+ onSnapshot(q,snap=>{
+  if(!snap.size){c.innerHTML=`<div class="card rounded-2xl p-8 text-center text-slate-500">Пока нет публикаций. Будь первым!</div>`;return}
+  const arr=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  c.innerHTML=arr.map(p=>{
+   const liked=currentUser&&p.likes?.includes(currentUser.uid);
+   const owner=currentUser&&currentUser.uid===p.authorUid;
+   const author=profileCache[p.authorUid]||{mcNick:p.author};
+   return `<article class="card rounded-2xl p-5">
+    <div class="flex justify-between gap-3"><button onclick="openProfile('${p.authorUid}')" class="flex items-center gap-3"><img src="${avatar(author)}" class="avatar w-10 h-10 rounded-xl"><span class="text-left"><b>${esc(p.author||"Игрок")}</b><small class="block text-slate-500">${p.createdAt?.toDate?p.createdAt.toDate().toLocaleString("ru-RU"):"Недавно"}</small></span></button>${owner?`<button onclick="removePost('${p.id}')" class="text-slate-600 hover:text-red-400"><i class="fa-solid fa-trash"></i></button>`:""}</div>
+    ${p.text?`<p class="mt-4 whitespace-pre-line text-sm text-slate-200">${esc(p.text)}</p>`:""}
+    ${p.mediaUrl?(p.mediaUrl.includes("youtube.com")||p.mediaUrl.includes("youtu.be")?`<div class="mt-4 aspect-video rounded-xl overflow-hidden"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${esc((p.mediaUrl.split("v=")[1]||p.mediaUrl.split("/").pop()).split("&")[0])}" allowfullscreen></iframe></div>`:`<img src="${esc(p.mediaUrl)}" class="mt-4 rounded-xl max-h-[500px] w-full object-cover">`):""}
+    <div class="mt-4 pt-3 border-t border-slate-800 flex gap-3"><button onclick='likePost(${JSON.stringify(p.id)},${JSON.stringify(p.likes||[])})' class="${liked?"text-green-400":"text-slate-500"} text-sm font-bold"><i class="${liked?"fa-solid":"fa-regular"} fa-heart mr-1"></i>${(p.likes||[]).length}</button></div>
+   </article>`;
+  }).join("");
+  arr.forEach(p=>p.authorUid&&loadProfile(p.authorUid));
+ },e=>console.error(e));
+}
 
-            try {
-                await addDoc(collection(db, "posts"), {
-                    author: currentUser.displayName || "Неизвестный",
-                    authorUid: currentUser.uid,
-                    text: text,
-                    mediaUrl: mediaUrl,
-                    likes: [],
-                    createdAt: new Date().toISOString()
-                });
+window.likePost=async(id,likes)=>{if(!currentUser){openAuth("login");return}const r=doc(db,"posts",id);if(likes.includes(currentUser.uid))await updateDoc(r,{likes:arrayRemove(currentUser.uid)});else await updateDoc(r,{likes:arrayUnion(currentUser.uid)})}
+window.removePost=async id=>{if(currentUser&&confirm("Удалить пост?"))await deleteDoc(doc(db,"posts",id))}
 
-                document.getElementById('postText').value = '';
-                document.getElementById('postMediaUrl').value = '';
-                showToast('Пост опубликован!');
-            } catch (err) {
-                showToast('Ошибка публикации!');
-                console.error(err);
-            }
-        };
+window.openProfile=async uid=>{
+ const p=profileCache[uid]||await loadProfile(uid);
+ if(!p){toast("Профиль не найден");return}
+ location.hash=`profile/${uid}`;
+ renderProfile(uid,p);
+}
+function renderProfile(uid,p){
+ $("app").innerHTML=`<div class="fade max-w-4xl mx-auto">
+  <button onclick="goHome()" class="text-sm text-slate-500 hover:text-white mb-4"><i class="fa-solid fa-arrow-left mr-2"></i>Назад</button>
+  <section class="card rounded-3xl overflow-hidden">
+   <div class="h-48 sm:h-64 banner" style="${p.bannerUrl?`background-image:url('${esc(p.bannerUrl)}')`:`background:${defaultBanner}`}"></div>
+   <div class="p-6 sm:p-8 -mt-16 relative">
+    <div class="flex flex-col sm:flex-row sm:items-end gap-4"><img src="${avatar(p)}" class="avatar w-32 h-32 rounded-3xl border-4 border-[#0d1522] shadow-2xl"><div class="flex-1"><div class="text-3xl font-black">${esc(p.mcNick||"Игрок")}</div><div class="text-green-400 text-sm font-bold mt-1">● Игрок SurvivalInKaif</div></div>${currentUser?.uid===uid?`<button onclick="openSettings()" class="btn border border-slate-700 hover:bg-white/5 px-4 py-2.5 rounded-xl text-sm font-bold"><i class="fa-solid fa-gear mr-2"></i>Настроить</button>`:""}</div>
+    <div class="mt-7 grid sm:grid-cols-[1fr_auto] gap-6"><div><div class="text-xs text-slate-500 uppercase tracking-widest font-bold">О себе</div><p class="mt-2 text-slate-300 whitespace-pre-line">${esc(p.bio||"Игрок пока ничего не рассказал о себе.")}</p></div><div class="sm:text-right"><div class="text-xs text-slate-500">Регистрация</div><div class="text-sm font-bold mt-1">${p.createdAt?.toDate?p.createdAt.toDate().toLocaleDateString("ru-RU"):"—"}</div></div></div>
+   </div>
+  </section>
+ </div>`;
+}
 
-        // Лайки
-        window.toggleLike = async (postId, currentLikes) => {
-            if (!currentUser) {
-                openAuthModal('login');
-                return;
-            }
-            const postRef = doc(db, "posts", postId);
-            const hasLiked = currentLikes.includes(currentUser.uid);
+window.goHome=()=>{location.hash="";home()}
+window.addEventListener("hashchange",()=>{const m=location.hash.match(/^#profile\\/(.+)$/);if(m)openProfile(m[1]);else home()});
 
-            if (hasLiked) {
-                await updateDoc(postRef, { likes: arrayRemove(currentUser.uid) });
-            } else {
-                await updateDoc(postRef, { likes: arrayUnion(currentUser.uid) });
-            }
-        };
+window.openAuth=mode=>{authMode=mode;setAuthMode(mode);$("authModal").classList.remove("hidden");$("authModal").classList.add("flex")}
+window.closeAuth=()=>{$("authModal").classList.add("hidden");$("authModal").classList.remove("flex")}
+window.setAuthMode=mode=>{authMode=mode;$("authTitle").textContent=mode==="register"?"Создать аккаунт":"Вход";$("authSub").textContent=mode==="register"?"Создай профиль и получи доступ к IP сервера.":"Войди, чтобы продолжить.";$("nickWrap").classList.toggle("hidden",mode!=="register");$("authBtn").textContent=mode==="register"?"Зарегистрироваться":"Войти";$("loginTab").className=mode==="login"?"flex-1 py-2 rounded-lg bg-green-500 text-slate-950 text-sm font-bold":"flex-1 py-2 rounded-lg text-slate-400 text-sm font-bold";$("regTab").className=mode==="register"?"flex-1 py-2 rounded-lg bg-green-500 text-slate-950 text-sm font-bold":"flex-1 py-2 rounded-lg text-slate-400 text-sm font-bold";$("authError").classList.add("hidden")}
 
-        // Удаление поста
-        window.deletePost = async (postId) => {
-            if (confirm("Удалить этот пост?")) {
-                await deleteDoc(doc(db, "posts", postId));
-                showToast("Пост удален");
-            }
-        };
+window.submitAuth=async e=>{
+ e.preventDefault();$("authError").classList.add("hidden");
+ const email=$("authEmail").value.trim(),pass=$("authPassword").value,nick=$("authNick").value.trim();
+ try{
+  if(authMode==="register"){
+   if(!/^[A-Za-z0-9_]{3,16}$/.test(nick))throw new Error("Ник: 3–16 символов, только A-Z, 0-9 и _.");
+   const r=await createUserWithEmailAndPassword(auth,email,pass);
+   await updateProfile(r.user,{displayName:nick});
+   await setDoc(doc(db,"users",r.user.uid),{mcNick:nick,bio:"",avatarUrl:`https://crafatar.com/renders/head/${encodeURIComponent(nick)}?overlay`,bannerUrl:"",email:email,createdAt:serverTimestamp()});
+   toast("Аккаунт создан!");closeAuth();
+  }else{await signInWithEmailAndPassword(auth,email,pass);toast("С возвращением!");closeAuth()}
+ }catch(err){$("authError").textContent=err.code==="auth/email-already-in-use"?"Этот email уже зарегистрирован.":err.message;$("authError").classList.remove("hidden")}
+}
+window.logout=async()=>{await signOut(auth);toast("Вы вышли из аккаунта");goHome()}
 
-        // Загрузка Ленты в реальном времени
-        const qPosts = query(collection(db, "posts"));
-        onSnapshot(qPosts, (snapshot) => {
-            const container = document.getElementById('postsFeedContainer');
-            if (snapshot.empty) {
-                container.innerHTML = `<div class="text-center py-10 text-slate-500 bg-card rounded-2xl">Пока нет публикаций. Будь первым!</div>`;
-                return;
-            }
+window.openSettings=()=>{
+ if(!currentUser)return openAuth("login");
+ const p=currentProfile||{};
+ $("profileNick").value=p.mcNick||currentUser.displayName||"";
+ $("profileBio").value=p.bio||"";
+ $("avatarPreview").src=avatar(p);
+ $("bannerPreview").style.backgroundImage=p.bannerUrl?`url('${p.bannerUrl}')`:"";
+ $("bannerPreview").innerHTML=p.bannerUrl?"":`<span class="text-slate-500 text-sm">Баннер не установлен</span>`;
+ $("settingsModal").classList.remove("hidden");$("settingsModal").classList.add("flex");
+}
+window.closeSettings=()=>{$("settingsModal").classList.add("hidden");$("settingsModal").classList.remove("flex")}
+window.saveProfile=async()=>{
+ const nick=$("profileNick").value.trim(),bio=$("profileBio").value.trim(),err=$("settingsError");
+ err.classList.add("hidden");
+ if(!/^[A-Za-z0-9_]{3,16}$/.test(nick)){err.textContent="Ник: 3–16 символов, только A-Z, 0-9 и _.";err.classList.remove("hidden");return}
+ const btn=$("saveProfileBtn");btn.disabled=true;btn.textContent="Сохраняем...";
+ try{
+  let avatarUrl=currentProfile?.avatarUrl||`https://crafatar.com/renders/head/${encodeURIComponent(nick)}?overlay`,bannerUrl=currentProfile?.bannerUrl||"";
+  const af=$("avatarFile").files[0],bf=$("bannerFile").files[0];
+  if(af){const r=ref(storage,`users/${currentUser.uid}/avatar_${Date.now()}`);await uploadBytes(r,af);avatarUrl=await getDownloadURL(r)}
+  if(bf){const r=ref(storage,`users/${currentUser.uid}/banner_${Date.now()}`);await uploadBytes(r,bf);bannerUrl=await getDownloadURL(r)}
+  await updateProfile(currentUser,{displayName:nick});
+  await updateDoc(doc(db,"users",currentUser.uid),{mcNick:nick,bio,avatarUrl,bannerUrl});
+  currentProfile=await loadProfile(currentUser.uid);nav();closeSettings();toast("Профиль сохранён!");
+  if(location.hash===`#profile/${currentUser.uid}`)renderProfile(currentUser.uid,currentProfile);
+ }catch(e){err.textContent="Не удалось сохранить профиль: "+e.message;err.classList.remove("hidden")}
+ finally{btn.disabled=false;btn.textContent="Сохранить"}
+}
 
-            let postsArr = [];
-            snapshot.forEach(doc => postsArr.push({ id: doc.id, ...doc.data() }));
-            postsArr.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-            container.innerHTML = postsArr.map(post => {
-                const isLiked = currentUser && post.likes && post.likes.includes(currentUser.uid);
-                const isOwner = currentUser && currentUser.uid === post.authorUid;
-                const dateStr = new Date(post.createdAt).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-
-                let mediaHtml = '';
-                if (post.mediaUrl) {
-                    if (post.mediaUrl.includes('youtube.com') || post.mediaUrl.includes('youtu.be')) {
-                        let ytId = post.mediaUrl.split('v=')[1] || post.mediaUrl.split('/').pop();
-                        if (ytId.includes('&')) ytId = ytId.split('&')[0];
-                        mediaHtml = `<div class="mt-3 aspect-video rounded-xl overflow-hidden"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${ytId}" frameborder="0" allowfullscreen></iframe></div>`;
-                    } else {
-                        mediaHtml = `<img src="${post.mediaUrl}" class="mt-3 rounded-xl max-h-96 w-full object-cover border border-slate-800" onerror="this.style.display='none'">`;
-                    }
-                }
-
-                return `
-                    <div class="bg-card p-5 rounded-2xl border border-slate-800 shadow-lg">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center gap-3">
-                                <img src="https://crafatar.com/renders/head/${post.author}?overlay" class="w-9 h-9 rounded-lg">
-                                <div>
-                                    <h4 class="font-bold text-sm text-white">${post.author}</h4>
-                                    <span class="text-xs text-slate-500">${dateStr}</span>
-                                </div>
-                            </div>
-                            ${isOwner ? `<button onclick="deletePost('${post.id}')" class="text-slate-500 hover:text-red-400 text-xs"><i class="fa-solid fa-trash"></i></button>` : ''}
-                        </div>
-                        <p class="text-sm text-slate-200 whitespace-pre-line">${post.text}</p>
-                        ${mediaHtml}
-                        <div class="mt-4 pt-3 border-t border-slate-800/60 flex items-center gap-4 text-xs">
-                            <button onclick="toggleLike('${post.id}', ${JSON.stringify(post.likes || [])})" class="flex items-center gap-1.5 font-semibold ${isLiked ? 'text-red-500' : 'text-slate-400 hover:text-slate-200'}">
-                                <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
-                                <span>${(post.likes || []).length}</span>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        });
-
-        // Вспомогательное UI
-        window.openAuthModal = (mode) => {
-            authMode = mode;
-            switchAuthMode(mode);
-            document.getElementById('authModal').classList.remove('hidden');
-            document.getElementById('authModal').classList.add('flex');
-        };
-
-        window.closeAuthModal = () => {
-            document.getElementById('authModal').classList.add('hidden');
-            document.getElementById('authModal').classList.remove('flex');
-        };
-
-        window.switchAuthMode = (mode) => {
-            authMode = mode;
-            const nickGrp = document.getElementById('mcNickGroup');
-            const btn = document.getElementById('authSubmitBtn');
-            const tabLogin = document.getElementById('modalTabLogin');
-            const tabReg = document.getElementById('modalTabRegister');
-
-            if (mode === 'register') {
-                nickGrp.classList.remove('hidden');
-                btn.innerText = "Зарегистрироваться";
-                tabReg.className = "font-bold text-lg text-accent border-b-2 border-accent pb-1";
-                tabLogin.className = "font-bold text-lg text-slate-400 pb-1";
-            } else {
-                nickGrp.classList.add('hidden');
-                btn.innerText = "Войти";
-                tabLogin.className = "font-bold text-lg text-accent border-b-2 border-accent pb-1";
-                tabReg.className = "font-bold text-lg text-slate-400 pb-1";
-            }
-        };
-
-        window.copyServerIp = () => {
-            const ip = document.getElementById('serverIpText').innerText;
-            navigator.clipboard.writeText(ip);
-            showToast('IP скопирован в буфер обмена!');
-        };
-
-        window.showToast = (msg) => {
-            const t = document.getElementById('toast');
-            t.innerText = msg;
-            t.classList.remove('hidden');
-            setTimeout(() => t.classList.add('hidden'), 3000);
-        };
-    </script>
+onAuthStateChanged(auth,async u=>{
+ currentUser=u;
+ currentProfile=u?await loadProfile(u.uid):null;
+ nav();
+ if(location.hash.startsWith("#profile/"))openProfile(location.hash.split("/")[1]);else home();
+});
+</script>
 </body>
 </html>

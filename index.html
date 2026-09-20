@@ -1,310 +1,974 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SurvivalInKaif — Minecraft Community</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<style>
-:root{--bg:#070b12;--panel:#0f1724;--panel2:#141f30;--line:#223047;--green:#22c55e;--green2:#16a34a}
-html{scroll-behavior:smooth}body{background:radial-gradient(circle at 50% -10%,#17263a 0,#070b12 42%);color:#f8fafc;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-*{box-sizing:border-box}.glass{background:rgba(15,23,36,.82);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.06)}
-.card{background:linear-gradient(145deg,#111b2a,#0d1522);border:1px solid var(--line);box-shadow:0 18px 60px rgba(0,0,0,.18)}
-.btn{transition:.18s ease}.btn:hover{transform:translateY(-1px)}.btn:active{transform:scale(.98)}
-.input{width:100%;background:#0a111d;border:1px solid #243249;border-radius:14px;padding:12px 14px;color:#fff;outline:none}
-.input:focus{border-color:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.1)}
-.avatar{object-fit:cover;background:#0a111d}.banner{background-size:cover;background-position:center}
-::-webkit-scrollbar{width:9px}::-webkit-scrollbar-thumb{background:#26354b;border-radius:99px}
-.hidden-view{display:none!important}.fade{animation:fade .2s ease}@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SurvivalInKaif - Minecraft Community Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        kaif: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            900: '#14532d',
+                            glow: '#22c55e',
+                            darkBg: '#090d16',
+                            cardBg: 'rgba(15, 23, 42, 0.75)',
+                            cardBorder: 'rgba(34, 197, 94, 0.15)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #070a12;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(34, 197, 94, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-panel-glow {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            box-shadow: 0 0 25px -5px rgba(34, 197, 94, 0.2);
+        }
+        .glow-text {
+            text-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+        }
+        .glow-btn {
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-btn:hover {
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.6);
+            transform: translateY(-2px);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f2937;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #22c55e;
+        }
+    </style>
 </head>
-<body class="min-h-screen">
+<body class="text-slate-100 min-h-screen flex flex-col font-sans selection:bg-kaif-500 selection:text-black">
 
-<nav class="sticky top-0 z-50 glass">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-    <button onclick="goHome()" class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-green-500 text-slate-950 font-black text-xl grid place-items-center shadow-lg shadow-green-500/10">S</div>
-      <div class="text-left">
-        <div class="font-black tracking-tight">Survival<span class="text-green-400">InKaif</span></div>
-        <div class="text-[10px] text-slate-500 uppercase tracking-[.2em]">Minecraft Community</div>
-      </div>
-    </button>
-    <div class="hidden md:flex items-center gap-2">
-      <button onclick="goHome()" class="px-3 py-2 rounded-xl text-sm text-slate-300 hover:bg-white/5">Главная</button>
-      <button onclick="scrollToPlayers()" class="px-3 py-2 rounded-xl text-sm text-slate-300 hover:bg-white/5">Игроки</button>
-    </div>
-    <div id="navAuth"></div>
-  </div>
-</nav>
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 w-full glass-panel border-b border-slate-800/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('feed')">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-kaif-600 to-emerald-400 p-0.5 shadow-lg shadow-kaif-500/20">
+                    <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                        <i class="fa-solid fa-cube text-kaif-400 text-2xl animate-pulse"></i>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-kaif-400">
+                        SURVIVAL<span class="text-kaif-500">IN</span>KAIF
+                    </span>
+                    <span class="block text-[10px] uppercase tracking-widest text-slate-400 font-semibold">Minecraft Network</span>
+                </div>
+            </div>
 
-<main id="app" class="max-w-7xl mx-auto px-4 sm:px-6 py-7"></main>
+            <!-- Main Navigation Links -->
+            <nav class="hidden md:flex items-center space-x-1 bg-slate-900/60 p-1.5 rounded-full border border-slate-800">
+                <button onclick="switchTab('feed')" id="nav-feed" class="px-5 py-2 rounded-full text-sm font-medium transition-all text-white bg-kaif-600/30 border border-kaif-500/30">
+                    <i class="fa-solid fa-rss mr-2 text-kaif-400"></i>Community Feed
+                </button>
+                <button onclick="switchTab('status')" id="nav-status" class="px-5 py-2 rounded-full text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all">
+                    <i class="fa-solid fa-server mr-2 text-kaif-400"></i>Server Status
+                </button>
+                <button onclick="switchTab('profile')" id="nav-profile" class="px-5 py-2 rounded-full text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all">
+                    <i class="fa-solid fa-user-gear mr-2 text-kaif-400"></i>My Profile
+                </button>
+            </nav>
 
-<!-- Auth -->
-<div id="authModal" class="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md hidden items-center justify-center p-4">
-  <div class="card w-full max-w-md rounded-3xl p-6 relative fade">
-    <button onclick="closeAuth()" class="absolute top-4 right-4 w-9 h-9 rounded-xl hover:bg-white/5 text-slate-400"><i class="fa-solid fa-xmark"></i></button>
-    <div class="mb-6">
-      <div class="text-xs text-green-400 font-bold uppercase tracking-widest">SurvivalInKaif</div>
-      <h2 id="authTitle" class="text-2xl font-black mt-1">Вход</h2>
-      <p id="authSub" class="text-sm text-slate-500 mt-1">Войди, чтобы получить доступ к серверу и профилю.</p>
-    </div>
-    <div class="flex gap-2 mb-5 p-1 bg-black/20 rounded-xl">
-      <button id="loginTab" onclick="setAuthMode('login')" class="flex-1 py-2 rounded-lg bg-green-500 text-slate-950 text-sm font-bold">Вход</button>
-      <button id="regTab" onclick="setAuthMode('register')" class="flex-1 py-2 rounded-lg text-slate-400 text-sm font-bold">Регистрация</button>
-    </div>
-    <form onsubmit="submitAuth(event)" class="space-y-3">
-      <div id="nickWrap" class="hidden"><label class="text-xs text-slate-400">Minecraft ник</label><input id="authNick" class="input mt-1" maxlength="16" placeholder="Steve"></div>
-      <div><label class="text-xs text-slate-400">Email</label><input id="authEmail" type="email" required class="input mt-1" placeholder="you@example.com"></div>
-      <div><label class="text-xs text-slate-400">Пароль</label><input id="authPassword" type="password" minlength="6" required class="input mt-1" placeholder="Минимум 6 символов"></div>
-      <p id="authError" class="hidden text-sm text-red-400"></p>
-      <button id="authBtn" class="btn w-full bg-green-500 hover:bg-green-400 text-slate-950 py-3 rounded-xl font-black">Войти</button>
-    </form>
-  </div>
-</div>
+            <!-- User Auth / Profile Area -->
+            <div class="flex items-center space-x-3">
+                <!-- Guest View -->
+                <div id="auth-guest-controls" class="flex items-center space-x-2">
+                    <button onclick="openAuthModal('login')" class="px-4 py-2 text-sm font-semibold text-slate-300 hover:text-white transition">
+                        Log In
+                    </button>
+                    <button onclick="openAuthModal('register')" class="px-5 py-2 rounded-xl text-sm font-bold bg-kaif-500 hover:bg-kaif-400 text-slate-950 glow-btn transition">
+                        Register
+                    </button>
+                </div>
 
-<!-- Settings -->
-<div id="settingsModal" class="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md hidden items-center justify-center p-4 overflow-y-auto">
-  <div class="card w-full max-w-2xl rounded-3xl p-6 relative fade my-8">
-    <button onclick="closeSettings()" class="absolute top-4 right-4 w-9 h-9 rounded-xl hover:bg-white/5 text-slate-400"><i class="fa-solid fa-xmark"></i></button>
-    <h2 class="text-2xl font-black">Настройки профиля</h2>
-    <p class="text-sm text-slate-500 mt-1 mb-6">Настрой, как тебя видят другие игроки.</p>
-    <div class="space-y-5">
-      <div>
-        <label class="text-xs text-slate-400">Баннер профиля</label>
-        <div id="bannerPreview" class="banner h-36 rounded-2xl mt-2 border border-slate-700 overflow-hidden flex items-center justify-center bg-slate-900">
-          <span class="text-slate-500 text-sm">Баннер не установлен</span>
+                <!-- Logged In View (Hidden by default) -->
+                <div id="auth-user-controls" class="hidden flex items-center space-x-3">
+                    <div onclick="switchTab('profile')" class="flex items-center space-x-3 bg-slate-900/80 hover:bg-slate-800 border border-slate-800 hover:border-kaif-500/50 p-1.5 pr-4 rounded-xl cursor-pointer transition">
+                        <img id="nav-user-avatar" src="https://crafatar.com/avatars/8667ba71-b82a-400c-af9a-f0b342e2b02c?overlay=true" class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700" alt="Avatar">
+                        <div class="text-left">
+                            <p id="nav-user-name" class="text-xs font-bold text-white leading-tight">Player</p>
+                            <span id="nav-user-mc" class="text-[10px] text-kaif-400 font-mono">@Steve</span>
+                        </div>
+                    </div>
+                    <button onclick="logout()" title="Logout" class="w-9 h-9 rounded-xl bg-slate-900/80 hover:bg-red-500/20 text-slate-400 hover:text-red-400 border border-slate-800 hover:border-red-500/30 flex items-center justify-center transition">
+                        <i class="fa-solid fa-right-from-bracket text-sm"></i>
+                    </button>
+                </div>
+            </div>
         </div>
-        <input id="bannerFile" type="file" accept="image/*" class="mt-2 block w-full text-xs text-slate-400">
-      </div>
-      <div class="grid sm:grid-cols-[120px_1fr] gap-5 items-center">
-        <div class="text-center">
-          <img id="avatarPreview" class="avatar w-24 h-24 rounded-2xl border-2 border-green-500 mx-auto">
-          <input id="avatarFile" type="file" accept="image/*" class="mt-2 w-full text-[10px] text-slate-500">
+    </header>
+
+    <!-- Hero & IP Section -->
+    <section class="relative py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <div class="glass-panel-glow rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+            <!-- Background Decorative Grid -->
+            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#22c55e_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
+
+            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                <!-- Text / Status -->
+                <div class="text-center md:text-left space-y-2">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-kaif-500/10 border border-kaif-500/30 text-kaif-400 text-xs font-semibold">
+                        <span class="w-2 h-2 rounded-full bg-kaif-500 animate-ping"></span>
+                        Survival Season 5 Online
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                        Experience Pure <span class="text-kaif-400 glow-text">Survival Kaif</span>
+                    </h1>
+                    <p class="text-slate-400 text-sm max-w-xl">
+                        Join hundreds of players in an epic anarchy-vanilla Minecraft world with upgraded survival mechanics, land protection, and custom events!
+                    </p>
+                </div>
+
+                <!-- Server IP Widget (Protected) -->
+                <div class="w-full md:w-auto bg-slate-950/80 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center gap-4">
+                    <div class="text-center sm:text-left">
+                        <span class="text-[10px] uppercase font-bold text-slate-500 tracking-wider block">Server Address</span>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span id="ip-address-text" class="font-mono text-lg font-bold text-kaif-400 select-all filter blur-[3px] transition-all duration-300">
+                                play.survivalinkaif.net
+                            </span>
+                            <span id="ip-lock-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                                <i class="fa-solid fa-lock mr-1"></i> Locked
+                            </span>
+                        </div>
+                    </div>
+
+                    <button id="copy-ip-btn" onclick="handleCopyIP()" class="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm flex items-center justify-center gap-2 border border-slate-700 transition cursor-pointer">
+                        <i id="copy-ip-icon" class="fa-solid fa-lock text-slate-400"></i>
+                        <span id="copy-ip-label">Login to Copy IP</span>
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="space-y-3">
-          <div><label class="text-xs text-slate-400">Minecraft ник</label><input id="profileNick" maxlength="16" class="input mt-1"></div>
-          <div><label class="text-xs text-slate-400">О себе</label><textarea id="profileBio" maxlength="240" rows="4" class="input mt-1 resize-none" placeholder="Расскажи немного о себе..."></textarea></div>
+    </section>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- TAB 1: PLAYER FEED -->
+        <section id="tab-feed" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Left/Main Column: Post Creator & Post List -->
+                <div class="lg:col-span-2 space-y-6">
+                    
+                    <!-- Create Post Box -->
+                    <div id="post-creator-card" class="glass-panel rounded-2xl p-5 relative">
+                        <div id="creator-locked-overlay" class="absolute inset-0 bg-slate-950/70 backdrop-blur-xs rounded-2xl z-20 flex flex-col items-center justify-center p-4 text-center">
+                            <i class="fa-solid fa-lock text-kaif-400 text-2xl mb-2"></i>
+                            <p class="text-sm font-semibold text-slate-200">Want to share your Minecraft builds & thoughts?</p>
+                            <p class="text-xs text-slate-400 mb-3">Login or register to publish posts to the feed.</p>
+                            <button onclick="openAuthModal('login')" class="px-4 py-2 rounded-xl bg-kaif-500 text-slate-950 font-bold text-xs glow-btn">
+                                Sign In Now
+                            </button>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <img id="creator-user-avatar" src="https://crafatar.com/avatars/8667ba71-b82a-400c-af9a-f0b342e2b02c?overlay=true" class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700" alt="Avatar">
+                            <div class="flex-1">
+                                <textarea id="post-text-input" rows="3" placeholder="What's happening in SurvivalInKaif? Share screenshots, YouTube videos, or status..." class="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-kaif-500/50 transition resize-none"></textarea>
+                                
+                                <!-- Attachments inputs -->
+                                <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <div class="flex items-center bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5">
+                                        <i class="fa-solid fa-image text-slate-500 text-xs mr-2"></i>
+                                        <input type="url" id="post-image-url" placeholder="Image URL (optional)" class="bg-transparent text-xs text-slate-200 focus:outline-none w-full">
+                                    </div>
+                                    <div class="flex items-center bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5">
+                                        <i class="fa-brands fa-youtube text-slate-500 text-xs mr-2"></i>
+                                        <input type="url" id="post-yt-url" placeholder="YouTube URL (optional)" class="bg-transparent text-xs text-slate-200 focus:outline-none w-full">
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 flex items-center justify-between border-t border-slate-800/80 pt-3">
+                                    <span class="text-[11px] text-slate-500"><i class="fa-solid fa-circle-info mr-1"></i>Be respectful to players</span>
+                                    <button onclick="publishPost()" class="px-5 py-2 rounded-xl bg-kaif-500 hover:bg-kaif-400 text-slate-950 font-bold text-xs glow-btn flex items-center gap-2 transition">
+                                        <i class="fa-solid fa-paper-plane"></i> Publish Post
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Posts Stream -->
+                    <div id="posts-container" class="space-y-4">
+                        <!-- Dynamic Posts injected here -->
+                        <div class="text-center py-12 glass-panel rounded-2xl">
+                            <i class="fa-solid fa-circle-notch fa-spin text-kaif-400 text-2xl mb-2"></i>
+                            <p class="text-slate-400 text-sm">Loading community posts...</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Column: Sidebar / Highlights -->
+                <div class="space-y-6">
+                    <!-- Community Stats Widget -->
+                    <div class="glass-panel rounded-2xl p-5 space-y-4">
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-chart-simple text-kaif-400"></i> Server Info
+                        </h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-center">
+                                <span class="block text-2xl font-black text-kaif-400">1.20.x</span>
+                                <span class="text-[10px] text-slate-400 uppercase font-bold">MC Version</span>
+                            </div>
+                            <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-center">
+                                <span id="widget-online-count" class="block text-2xl font-black text-emerald-400">42/100</span>
+                                <span class="text-[10px] text-slate-400 uppercase font-bold">Active Players</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rules / Quick Info -->
+                    <div class="glass-panel rounded-2xl p-5 space-y-3">
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved text-kaif-400"></i> Server Rules
+                        </h3>
+                        <ul class="text-xs text-slate-300 space-y-2">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-kaif-500 mt-0.5"></i>
+                                <span>No hacked clients, X-Ray, or exploits.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-kaif-500 mt-0.5"></i>
+                                <span>Respect all players in community chat.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-kaif-500 mt-0.5"></i>
+                                <span>Have fun & enjoy your Kaif!</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 2: PROFILE PAGE / MODAL SECTION -->
+        <section id="tab-profile" class="hidden max-w-3xl mx-auto space-y-6">
+            <div id="profile-unauth-notice" class="glass-panel rounded-2xl p-8 text-center space-y-4">
+                <i class="fa-solid fa-user-lock text-kaif-400 text-4xl mb-2"></i>
+                <h2 class="text-xl font-bold text-white">Profile Customization Locked</h2>
+                <p class="text-sm text-slate-400 max-w-md mx-auto">
+                    Please log in or register a SurvivalInKaif account to set up your Minecraft skin avatar, custom banner, and bio!
+                </p>
+                <button onclick="openAuthModal('login')" class="px-6 py-2.5 rounded-xl bg-kaif-500 text-slate-950 font-bold text-sm glow-btn">
+                    Sign In / Register
+                </button>
+            </div>
+
+            <div id="profile-edit-card" class="hidden glass-panel rounded-3xl overflow-hidden">
+                <!-- Custom Profile Banner -->
+                <div id="profile-banner-preview" class="h-40 w-full bg-gradient-to-r from-kaif-900 via-slate-900 to-emerald-950 relative border-b border-slate-800 bg-cover bg-center">
+                    <div class="absolute inset-0 bg-black/30"></div>
+                </div>
+
+                <div class="p-6 sm:p-8 relative -mt-16 space-y-6">
+                    <!-- Profile Header Row -->
+                    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                        <div class="flex items-end space-x-4">
+                            <img id="profile-avatar-preview" src="https://crafatar.com/avatars/8667ba71-b82a-400c-af9a-f0b342e2b02c?overlay=true" class="w-24 h-24 rounded-2xl bg-slate-900 border-4 border-slate-950 shadow-xl object-cover" alt="Profile Skin">
+                            <div>
+                                <h2 id="profile-display-name" class="text-2xl font-black text-white">Player Name</h2>
+                                <p id="profile-mc-name" class="text-xs text-kaif-400 font-mono">@MinecraftNick</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Form -->
+                    <form id="profile-form" onsubmit="saveUserProfile(event)" class="space-y-4 pt-4 border-t border-slate-800">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Minecraft Nickname</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="prof-mc-input" placeholder="e.g. Notch" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-kaif-500" required>
+                                <button type="button" onclick="fetchMinecraftAvatar()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 border border-slate-700 whitespace-nowrap">
+                                    Fetch Skin Head
+                                </button>
+                            </div>
+                            <span class="text-[11px] text-slate-500 mt-1 block">Fetches official Minecraft 3D avatar head automatically.</span>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Custom Avatar Image URL (Optional Override)</label>
+                            <input type="url" id="prof-avatar-url" placeholder="https://..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-kaif-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Banner Image URL</label>
+                            <input type="url" id="prof-banner-url" placeholder="https://..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-kaif-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Bio / Status Message</label>
+                            <textarea id="prof-bio-input" rows="3" placeholder="Tell the SurvivalInKaif players about your base, clan, or playstyle..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-kaif-500 resize-none"></textarea>
+                        </div>
+
+                        <div class="pt-2 flex justify-end">
+                            <button type="submit" class="px-6 py-3 rounded-xl bg-kaif-500 hover:bg-kaif-400 text-slate-950 font-bold text-sm glow-btn flex items-center gap-2">
+                                <i class="fa-solid fa-floppy-disk"></i> Save Profile Settings
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: SERVER STATUS -->
+        <section id="tab-status" class="hidden space-y-6">
+            <div class="glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-800 pb-6 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-black text-white">Live Server Status</h2>
+                        <p class="text-xs text-slate-400">Real-time metrics for SurvivalInKaif network</p>
+                    </div>
+                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                        ALL SYSTEMS OPERATIONAL
+                    </div>
+                </div>
+
+                <!-- Server Info Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
+                        <div class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Main Survival</div>
+                        <div class="text-2xl font-black text-white">42 / 100</div>
+                        <div class="w-full bg-slate-800 h-2 rounded-full mt-3 overflow-hidden">
+                            <div class="bg-kaif-500 h-full w-[42%]"></div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
+                        <div class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">TPS (Performance)</div>
+                        <div class="text-2xl font-black text-kaif-400">20.00</div>
+                        <p class="text-[11px] text-slate-500 mt-1">Super smooth tick rate</p>
+                    </div>
+                    <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
+                        <div class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Uptime</div>
+                        <div class="text-2xl font-black text-white">99.9%</div>
+                        <p class="text-[11px] text-slate-500 mt-1">24/7 Dedicated hosting</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Authentication Modal -->
+    <div id="auth-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel-glow rounded-3xl max-w-md w-full p-6 sm:p-8 relative border border-slate-700 animate-in fade-in zoom-in duration-200">
+            <!-- Close Button -->
+            <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <!-- Modal Header -->
+            <div class="text-center space-y-1 mb-6">
+                <div class="w-12 h-12 rounded-xl bg-kaif-500/10 border border-kaif-500/30 flex items-center justify-center mx-auto mb-2">
+                    <i class="fa-solid fa-cube text-kaif-400 text-xl"></i>
+                </div>
+                <h3 id="auth-modal-title" class="text-2xl font-black text-white">Welcome Back</h3>
+                <p id="auth-modal-subtitle" class="text-xs text-slate-400">Sign in to your SurvivalInKaif account</p>
+            </div>
+
+            <!-- Auth Form -->
+            <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div id="mc-name-group" class="hidden">
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Minecraft Nickname</label>
+                    <input type="text" id="auth-mc-name" placeholder="Your Minecraft Username" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-kaif-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Email Address</label>
+                    <input type="email" id="auth-email" placeholder="player@kaif.net" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-kaif-500" required>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Password</label>
+                    <input type="password" id="auth-password" placeholder="••••••••" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-kaif-500" required>
+                </div>
+
+                <div id="auth-error-msg" class="hidden text-xs text-red-400 bg-red-500/10 border border-red-500/20 p-2.5 rounded-xl"></div>
+
+                <button type="submit" id="auth-submit-btn" class="w-full py-3 rounded-xl bg-kaif-500 hover:bg-kaif-400 text-slate-950 font-bold text-sm glow-btn transition">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="mt-6 text-center text-xs text-slate-400 border-t border-slate-800 pt-4">
+                <span id="auth-switch-prompt">Don't have an account?</span>
+                <button onclick="toggleAuthMode()" id="auth-switch-btn" class="text-kaif-400 font-bold ml-1 hover:underline">
+                    Register Here
+                </button>
+            </div>
         </div>
-      </div>
-      <p id="settingsError" class="hidden text-sm text-red-400"></p>
-      <div class="flex justify-end gap-2">
-        <button onclick="closeSettings()" class="px-4 py-2.5 rounded-xl text-sm text-slate-400 hover:bg-white/5">Отмена</button>
-        <button id="saveProfileBtn" onclick="saveProfile()" class="btn bg-green-500 hover:bg-green-400 text-slate-950 px-5 py-2.5 rounded-xl text-sm font-black">Сохранить</button>
-      </div>
     </div>
-  </div>
-</div>
 
-<div id="toast" class="fixed bottom-5 right-5 z-[120] hidden bg-green-500 text-slate-950 px-4 py-3 rounded-xl font-bold text-sm shadow-2xl"></div>
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-<script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import {getFirestore,doc,getDoc,setDoc,collection,addDoc,query,onSnapshot,updateDoc,deleteDoc,arrayUnion,arrayRemove,serverTimestamp,orderBy} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-import {getStorage,ref,uploadBytes,getDownloadURL} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js";
+    <!-- Firebase Imports Module -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            signOut, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc, 
+            getDoc, 
+            addDoc, 
+            onSnapshot, 
+            updateDoc, 
+            deleteDoc, 
+            arrayUnion, 
+            arrayRemove,
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-const firebaseConfig={
- apiKey:"AIzaSyDvi1_IgnU7D6-ZG1r7ULxTJ2Ip7ucNPHo",
- authDomain:"survivalinkaif.firebaseapp.com",
- projectId:"survivalinkaif",
- storageBucket:"survivalinkaif.firebasestorage.app",
- messagingSenderId:"1031638928660",
- appId:"1:1031638928660:web:86178899754cabfa590601",
- measurementId:"G-ZJ7CJQQQGJ"
-};
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),storage=getStorage(app);
-let currentUser=null,currentProfile=null,authMode="login",profileCache={};
-const fallbackAvatar="https://crafatar.com/renders/head/Steve?overlay";
-const defaultBanner="linear-gradient(135deg,#172033,#0b111c)";
+        // Provided Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDvi1_IgnU7D6-ZG1r7ULxTJ2Ip7ucNPHo",
+            authDomain: "survivalinkaif.firebaseapp.com",
+            projectId: "survivalinkaif",
+            storageBucket: "survivalinkaif.firebasestorage.app",
+            messagingSenderId: "1031638928660",
+            appId: "1:1031638928660:web:86178899754cabfa590601",
+            measurementId: "G-ZJ7CJQQQGJ"
+        };
 
-const $=id=>document.getElementById(id);
-function toast(msg){$("toast").textContent=msg;$("toast").classList.remove("hidden");clearTimeout(window.__toast);window.__toast=setTimeout(()=>$("toast").classList.add("hidden"),2800)}
-function esc(v=""){return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-function avatar(p){return p?.avatarUrl||`https://crafatar.com/renders/head/${encodeURIComponent(p?.mcNick||"Steve")}?overlay`}
-function banner(p){return p?.bannerUrl||""}
+        // Global Firebase App Setup
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-async function loadProfile(uid){
- const snap=await getDoc(doc(db,"users",uid));
- if(snap.exists()){profileCache[uid]=snap.data();return snap.data()}
- return null;
-}
+        // Application State
+        let currentUser = null;
+        let userProfileData = null;
+        let isAuthLoginMode = true;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'survival-kaif';
 
-function nav(){
- const n=$("navAuth");
- if(!currentUser){n.innerHTML=`<div class="flex gap-2"><button onclick="openAuth('login')" class="px-3 py-2 text-sm text-slate-300">Войти</button><button onclick="openAuth('register')" class="bg-green-500 text-slate-950 px-4 py-2 rounded-xl text-sm font-black">Регистрация</button></div>`;return}
- const p=currentProfile||{};
- n.innerHTML=`<div class="flex items-center gap-2">
-   <button onclick="openProfile('${currentUser.uid}')" class="flex items-center gap-2 px-2 py-1 rounded-xl hover:bg-white/5">
-     <img src="${avatar(p)}" class="w-9 h-9 rounded-xl avatar border border-slate-700">
-     <span class="hidden sm:block text-sm font-bold">${esc(p.mcNick||currentUser.displayName||"Игрок")}</span>
-   </button>
-   <button onclick="openSettings()" class="w-9 h-9 rounded-xl text-slate-400 hover:bg-white/5" title="Настройки"><i class="fa-solid fa-gear"></i></button>
-   <button onclick="logout()" class="w-9 h-9 rounded-xl text-slate-400 hover:bg-white/5" title="Выйти"><i class="fa-solid fa-right-from-bracket"></i></button>
- </div>`;
-}
+        // Helper: Show Toast Messages
+        window.showToast = function(message, type = 'info') {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto px-4 py-3 rounded-xl border text-xs font-bold flex items-center gap-3 shadow-2xl transition-all duration-300 transform translate-y-2 opacity-0 glass-panel ${
+                type === 'error' ? 'border-red-500/40 text-red-400' : 
+                type === 'success' ? 'border-kaif-500/40 text-kaif-400' : 
+                'border-slate-700 text-slate-200'
+            }`;
+            
+            const icon = type === 'error' ? 'fa-circle-exclamation' : type === 'success' ? 'fa-circle-check' : 'fa-circle-info';
+            toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i> <span>${message}</span>`;
+            
+            toastContainer.appendChild(toast);
 
-async function home(){
- location.hash="";
- $("app").innerHTML=`<div class="fade space-y-7">
-   <section class="relative overflow-hidden rounded-3xl border border-slate-800 card p-6 sm:p-10">
-     <div class="absolute -right-24 -top-24 w-72 h-72 rounded-full bg-green-500/10 blur-3xl"></div>
-     <div class="relative grid lg:grid-cols-[1.35fr_.65fr] gap-8 items-center">
-       <div>
-         <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold"><span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> PaperMC 1.20+</div>
-         <h1 class="text-4xl sm:text-6xl font-black tracking-tight mt-5">Survival<span class="text-green-400">InKaif</span></h1>
-         <p class="text-slate-400 mt-3 max-w-xl">Место, где собираются игроки, общаются, делятся моментами и заходят на свой Minecraft-сервер.</p>
-         <div class="flex flex-wrap gap-3 mt-7"><button onclick="copyServerIp()" class="btn bg-green-500 hover:bg-green-400 text-slate-950 px-5 py-3 rounded-xl font-black"><i class="fa-regular fa-copy mr-2"></i>Скопировать IP</button><button onclick="scrollToPlayers()" class="btn border border-slate-700 hover:bg-white/5 px-5 py-3 rounded-xl font-bold">Посмотреть игроков</button></div>
-       </div>
-       <div class="rounded-2xl bg-[#09101b] border border-slate-800 p-5">
-         <div class="text-xs text-slate-500 uppercase tracking-widest font-bold">Сервер</div>
-         <div class="flex items-center gap-2 mt-3"><span class="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></span><span id="serverStatus" class="font-bold">Проверяем доступ...</span></div>
-         <div id="serverIpBox" class="mt-5"></div>
-       </div>
-     </div>
-   </section>
-   <section id="playersSection">
-     <div class="flex items-end justify-between mb-4"><div><div class="text-xs text-green-400 font-bold uppercase tracking-widest">Community</div><h2 class="text-2xl font-black mt-1">Игроки</h2></div><span id="playerCount" class="text-xs text-slate-500"></span></div>
-     <div id="playersGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"><div class="text-slate-500">Загрузка...</div></div>
-   </section>
-   <section>
-     <div class="flex items-end justify-between mb-4"><div><div class="text-xs text-green-400 font-bold uppercase tracking-widest">Community feed</div><h2 class="text-2xl font-black mt-1">Лента</h2></div></div>
-     <div id="postsFeed" class="space-y-4"><div class="text-slate-500">Загрузка постов...</div></div>
-   </section>
- </div>`;
- await loadServer();
- loadPlayers();
- loadPosts();
-}
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
 
-async function loadServer(){
- if(!currentUser){$("serverStatus").textContent="Только для зарегистрированных";$("serverIpBox").innerHTML=`<button onclick="openAuth('register')" class="w-full bg-white/5 hover:bg-white/10 border border-slate-700 p-4 rounded-xl text-sm font-bold text-slate-300"><i class="fa-solid fa-lock mr-2 text-green-400"></i>Зарегистрируйся, чтобы получить IP</button>`;return}
- try{
-  const s=await getDoc(doc(db,"servers","main"));
-  if(!s.exists()) throw new Error("SERVER_NOT_FOUND");
-  const d=s.data();
-  $("serverStatus").textContent=d.online===false?"Сервер офлайн":"Сервер доступен";
-  $("serverIpBox").innerHTML=`<div class="flex items-center gap-2 bg-black/30 border border-slate-800 rounded-xl p-2"><code id="ipValue" class="font-mono text-sm font-bold px-2 flex-1 truncate">${esc(d.address||"")}</code><button onclick="copyLoadedIp()" class="bg-green-500 text-slate-950 px-3 py-2 rounded-lg text-xs font-black"><i class="fa-regular fa-copy mr-1"></i>Копировать</button></div>`;
- }catch(e){$("serverStatus").textContent="Не удалось загрузить сервер";$("serverIpBox").innerHTML=`<div class="text-xs text-red-400 bg-red-500/5 border border-red-500/10 rounded-xl p-3">Добавь документ <b>servers/main</b> в Firestore и разреши чтение только авторизованным.</div>`}
-}
-window.copyServerIp=()=>{if(!currentUser){openAuth("register");return}copyLoadedIp()};
-window.copyLoadedIp=async()=>{const ip=$("ipValue")?.textContent?.trim();if(!ip)return;await navigator.clipboard.writeText(ip);toast("IP скопирован!")}
-window.scrollToPlayers=()=>document.getElementById("playersSection")?.scrollIntoView({behavior:"smooth"});
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        };
 
-async function loadPlayers(){
- const grid=$("playersGrid"); if(!grid)return;
- const q=query(collection(db,"users"));
- onSnapshot(q,snap=>{
-  if(!snap.size){grid.innerHTML=`<div class="sm:col-span-2 lg:col-span-3 card rounded-2xl p-8 text-center text-slate-500">Пока нет зарегистрированных игроков.</div>`;return}
-  const arr=snap.docs.map(d=>({uid:d.id,...d.data()}));
-  $("playerCount").textContent=`${arr.length} ${arr.length===1?"игрок":"игроков"}`;
-  grid.innerHTML=arr.map(p=>`<button onclick="openProfile('${p.uid}')" class="card rounded-2xl overflow-hidden text-left hover:border-slate-600 transition">
-    <div class="h-20 banner" style="${p.bannerUrl?`background-image:url('${esc(p.bannerUrl)}')`: `background:${defaultBanner}`}"></div>
-    <div class="p-4 -mt-8 relative"><img src="${avatar(p)}" class="avatar w-16 h-16 rounded-2xl border-2 border-[#0d1522] shadow-xl"><div class="mt-2 font-black">${esc(p.mcNick||"Игрок")}</div><div class="text-xs text-slate-500 mt-1 line-clamp-2">${esc(p.bio||"Игрок SurvivalInKaif")}</div></div>
-  </button>`).join("");
- },e=>{grid.innerHTML=`<div class="text-red-400">Ошибка загрузки игроков.</div>`});
-}
+        // Navigation Switcher
+        window.switchTab = function(tabName) {
+            ['feed', 'profile', 'status'].forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                const nav = document.getElementById(`nav-${t}`);
+                if (t === tabName) {
+                    el.classList.remove('hidden');
+                    if (nav) {
+                        nav.classList.add('text-white', 'bg-kaif-600/30', 'border', 'border-kaif-500/30');
+                        nav.classList.remove('text-slate-400');
+                    }
+                } else {
+                    el.classList.add('hidden');
+                    if (nav) {
+                        nav.classList.remove('text-white', 'bg-kaif-600/30', 'border', 'border-kaif-500/30');
+                        nav.classList.add('text-slate-400');
+                    }
+                }
+            });
+        };
 
-function loadPosts(){
- const c=$("postsFeed"); if(!c)return;
- const q=query(collection(db,"posts"));
- onSnapshot(q,snap=>{
-  if(!snap.size){c.innerHTML=`<div class="card rounded-2xl p-8 text-center text-slate-500">Пока нет публикаций. Будь первым!</div>`;return}
-  const arr=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-  c.innerHTML=arr.map(p=>{
-   const liked=currentUser&&p.likes?.includes(currentUser.uid);
-   const owner=currentUser&&currentUser.uid===p.authorUid;
-   const author=profileCache[p.authorUid]||{mcNick:p.author};
-   return `<article class="card rounded-2xl p-5">
-    <div class="flex justify-between gap-3"><button onclick="openProfile('${p.authorUid}')" class="flex items-center gap-3"><img src="${avatar(author)}" class="avatar w-10 h-10 rounded-xl"><span class="text-left"><b>${esc(p.author||"Игрок")}</b><small class="block text-slate-500">${p.createdAt?.toDate?p.createdAt.toDate().toLocaleString("ru-RU"):"Недавно"}</small></span></button>${owner?`<button onclick="removePost('${p.id}')" class="text-slate-600 hover:text-red-400"><i class="fa-solid fa-trash"></i></button>`:""}</div>
-    ${p.text?`<p class="mt-4 whitespace-pre-line text-sm text-slate-200">${esc(p.text)}</p>`:""}
-    ${p.mediaUrl?(p.mediaUrl.includes("youtube.com")||p.mediaUrl.includes("youtu.be")?`<div class="mt-4 aspect-video rounded-xl overflow-hidden"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${esc((p.mediaUrl.split("v=")[1]||p.mediaUrl.split("/").pop()).split("&")[0])}" allowfullscreen></iframe></div>`:`<img src="${esc(p.mediaUrl)}" class="mt-4 rounded-xl max-h-[500px] w-full object-cover">`):""}
-    <div class="mt-4 pt-3 border-t border-slate-800 flex gap-3"><button onclick='likePost(${JSON.stringify(p.id)},${JSON.stringify(p.likes||[])})' class="${liked?"text-green-400":"text-slate-500"} text-sm font-bold"><i class="${liked?"fa-solid":"fa-regular"} fa-heart mr-1"></i>${(p.likes||[]).length}</button></div>
-   </article>`;
-  }).join("");
-  arr.forEach(p=>p.authorUid&&loadProfile(p.authorUid));
- },e=>console.error(e));
-}
+        // Protected Copy Server IP Feature
+        window.handleCopyIP = function() {
+            if (!currentUser) {
+                window.showToast("Please register or login first to copy the server IP!", "error");
+                openAuthModal('login');
+                return;
+            }
 
-window.likePost=async(id,likes)=>{if(!currentUser){openAuth("login");return}const r=doc(db,"posts",id);if(likes.includes(currentUser.uid))await updateDoc(r,{likes:arrayRemove(currentUser.uid)});else await updateDoc(r,{likes:arrayUnion(currentUser.uid)})}
-window.removePost=async id=>{if(currentUser&&confirm("Удалить пост?"))await deleteDoc(doc(db,"posts",id))}
+            const ipText = "play.survivalinkaif.net";
+            // Clipboard copy implementation with iframe safety fallback
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(ipText);
+            } else {
+                const textarea = document.createElement("textarea");
+                textarea.value = ipText;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+            }
 
-window.openProfile=async uid=>{
- const p=profileCache[uid]||await loadProfile(uid);
- if(!p){toast("Профиль не найден");return}
- location.hash=`profile/${uid}`;
- renderProfile(uid,p);
-}
-function renderProfile(uid,p){
- $("app").innerHTML=`<div class="fade max-w-4xl mx-auto">
-  <button onclick="goHome()" class="text-sm text-slate-500 hover:text-white mb-4"><i class="fa-solid fa-arrow-left mr-2"></i>Назад</button>
-  <section class="card rounded-3xl overflow-hidden">
-   <div class="h-48 sm:h-64 banner" style="${p.bannerUrl?`background-image:url('${esc(p.bannerUrl)}')`:`background:${defaultBanner}`}"></div>
-   <div class="p-6 sm:p-8 -mt-16 relative">
-    <div class="flex flex-col sm:flex-row sm:items-end gap-4"><img src="${avatar(p)}" class="avatar w-32 h-32 rounded-3xl border-4 border-[#0d1522] shadow-2xl"><div class="flex-1"><div class="text-3xl font-black">${esc(p.mcNick||"Игрок")}</div><div class="text-green-400 text-sm font-bold mt-1">● Игрок SurvivalInKaif</div></div>${currentUser?.uid===uid?`<button onclick="openSettings()" class="btn border border-slate-700 hover:bg-white/5 px-4 py-2.5 rounded-xl text-sm font-bold"><i class="fa-solid fa-gear mr-2"></i>Настроить</button>`:""}</div>
-    <div class="mt-7 grid sm:grid-cols-[1fr_auto] gap-6"><div><div class="text-xs text-slate-500 uppercase tracking-widest font-bold">О себе</div><p class="mt-2 text-slate-300 whitespace-pre-line">${esc(p.bio||"Игрок пока ничего не рассказал о себе.")}</p></div><div class="sm:text-right"><div class="text-xs text-slate-500">Регистрация</div><div class="text-sm font-bold mt-1">${p.createdAt?.toDate?p.createdAt.toDate().toLocaleDateString("ru-RU"):"—"}</div></div></div>
-   </div>
-  </section>
- </div>`;
-}
+            window.showToast("Server IP copied to clipboard! See you in game!", "success");
+        };
 
-window.goHome=()=>{location.hash="";home()}
-window.addEventListener("hashchange",()=>{const m=location.hash.match(/^#profile\\/(.+)$/);if(m)openProfile(m[1]);else home()});
+        // Update IP Box State based on User Session
+        function updateIPBoxUI(isLoggedIn) {
+            const ipText = document.getElementById('ip-address-text');
+            const lockBadge = document.getElementById('ip-lock-badge');
+            const copyBtnIcon = document.getElementById('copy-ip-icon');
+            const copyBtnLabel = document.getElementById('copy-ip-label');
 
-window.openAuth=mode=>{authMode=mode;setAuthMode(mode);$("authModal").classList.remove("hidden");$("authModal").classList.add("flex")}
-window.closeAuth=()=>{$("authModal").classList.add("hidden");$("authModal").classList.remove("flex")}
-window.setAuthMode=mode=>{authMode=mode;$("authTitle").textContent=mode==="register"?"Создать аккаунт":"Вход";$("authSub").textContent=mode==="register"?"Создай профиль и получи доступ к IP сервера.":"Войди, чтобы продолжить.";$("nickWrap").classList.toggle("hidden",mode!=="register");$("authBtn").textContent=mode==="register"?"Зарегистрироваться":"Войти";$("loginTab").className=mode==="login"?"flex-1 py-2 rounded-lg bg-green-500 text-slate-950 text-sm font-bold":"flex-1 py-2 rounded-lg text-slate-400 text-sm font-bold";$("regTab").className=mode==="register"?"flex-1 py-2 rounded-lg bg-green-500 text-slate-950 text-sm font-bold":"flex-1 py-2 rounded-lg text-slate-400 text-sm font-bold";$("authError").classList.add("hidden")}
+            if (isLoggedIn) {
+                ipText.classList.remove('blur-[3px]');
+                lockBadge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-kaif-500/20 text-kaif-400 border border-kaif-500/30";
+                lockBadge.innerHTML = `<i class="fa-solid fa-unlock mr-1"></i> Unlocked`;
+                copyBtnIcon.className = "fa-solid fa-copy text-kaif-400";
+                copyBtnLabel.textContent = "Copy Server IP";
+            } else {
+                ipText.classList.add('blur-[3px]');
+                lockBadge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30";
+                lockBadge.innerHTML = `<i class="fa-solid fa-lock mr-1"></i> Locked`;
+                copyBtnIcon.className = "fa-solid fa-lock text-slate-400";
+                copyBtnLabel.textContent = "Login to Copy IP";
+            }
+        }
 
-window.submitAuth=async e=>{
- e.preventDefault();$("authError").classList.add("hidden");
- const email=$("authEmail").value.trim(),pass=$("authPassword").value,nick=$("authNick").value.trim();
- try{
-  if(authMode==="register"){
-   if(!/^[A-Za-z0-9_]{3,16}$/.test(nick))throw new Error("Ник: 3–16 символов, только A-Z, 0-9 и _.");
-   const r=await createUserWithEmailAndPassword(auth,email,pass);
-   await updateProfile(r.user,{displayName:nick});
-   await setDoc(doc(db,"users",r.user.uid),{mcNick:nick,bio:"",avatarUrl:`https://crafatar.com/renders/head/${encodeURIComponent(nick)}?overlay`,bannerUrl:"",email:email,createdAt:serverTimestamp()});
-   toast("Аккаунт создан!");closeAuth();
-  }else{await signInWithEmailAndPassword(auth,email,pass);toast("С возвращением!");closeAuth()}
- }catch(err){$("authError").textContent=err.code==="auth/email-already-in-use"?"Этот email уже зарегистрирован.":err.message;$("authError").classList.remove("hidden")}
-}
-window.logout=async()=>{await signOut(auth);toast("Вы вышли из аккаунта");goHome()}
+        // Auth Modal Handlers
+        window.openAuthModal = function(mode = 'login') {
+            isAuthLoginMode = (mode === 'login');
+            updateAuthModalUI();
+            document.getElementById('auth-modal').classList.remove('hidden');
+        };
 
-window.openSettings=()=>{
- if(!currentUser)return openAuth("login");
- const p=currentProfile||{};
- $("profileNick").value=p.mcNick||currentUser.displayName||"";
- $("profileBio").value=p.bio||"";
- $("avatarPreview").src=avatar(p);
- $("bannerPreview").style.backgroundImage=p.bannerUrl?`url('${p.bannerUrl}')`:"";
- $("bannerPreview").innerHTML=p.bannerUrl?"":`<span class="text-slate-500 text-sm">Баннер не установлен</span>`;
- $("settingsModal").classList.remove("hidden");$("settingsModal").classList.add("flex");
-}
-window.closeSettings=()=>{$("settingsModal").classList.add("hidden");$("settingsModal").classList.remove("flex")}
-window.saveProfile=async()=>{
- const nick=$("profileNick").value.trim(),bio=$("profileBio").value.trim(),err=$("settingsError");
- err.classList.add("hidden");
- if(!/^[A-Za-z0-9_]{3,16}$/.test(nick)){err.textContent="Ник: 3–16 символов, только A-Z, 0-9 и _.";err.classList.remove("hidden");return}
- const btn=$("saveProfileBtn");btn.disabled=true;btn.textContent="Сохраняем...";
- try{
-  let avatarUrl=currentProfile?.avatarUrl||`https://crafatar.com/renders/head/${encodeURIComponent(nick)}?overlay`,bannerUrl=currentProfile?.bannerUrl||"";
-  const af=$("avatarFile").files[0],bf=$("bannerFile").files[0];
-  if(af){const r=ref(storage,`users/${currentUser.uid}/avatar_${Date.now()}`);await uploadBytes(r,af);avatarUrl=await getDownloadURL(r)}
-  if(bf){const r=ref(storage,`users/${currentUser.uid}/banner_${Date.now()}`);await uploadBytes(r,bf);bannerUrl=await getDownloadURL(r)}
-  await updateProfile(currentUser,{displayName:nick});
-  await updateDoc(doc(db,"users",currentUser.uid),{mcNick:nick,bio,avatarUrl,bannerUrl});
-  currentProfile=await loadProfile(currentUser.uid);nav();closeSettings();toast("Профиль сохранён!");
-  if(location.hash===`#profile/${currentUser.uid}`)renderProfile(currentUser.uid,currentProfile);
- }catch(e){err.textContent="Не удалось сохранить профиль: "+e.message;err.classList.remove("hidden")}
- finally{btn.disabled=false;btn.textContent="Сохранить"}
-}
+        window.closeAuthModal = function() {
+            document.getElementById('auth-modal').classList.add('hidden');
+            document.getElementById('auth-error-msg').classList.add('hidden');
+        };
 
-onAuthStateChanged(auth,async u=>{
- currentUser=u;
- currentProfile=u?await loadProfile(u.uid):null;
- nav();
- if(location.hash.startsWith("#profile/"))openProfile(location.hash.split("/")[1]);else home();
-});
-</script>
+        window.toggleAuthMode = function() {
+            isAuthLoginMode = !isAuthLoginMode;
+            updateAuthModalUI();
+        };
+
+        function updateAuthModalUI() {
+            const title = document.getElementById('auth-modal-title');
+            const subtitle = document.getElementById('auth-modal-subtitle');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            const mcGroup = document.getElementById('mc-name-group');
+            const switchPrompt = document.getElementById('auth-switch-prompt');
+            const switchBtn = document.getElementById('auth-switch-btn');
+
+            if (isAuthLoginMode) {
+                title.textContent = "Welcome Back";
+                subtitle.textContent = "Sign in to your SurvivalInKaif account";
+                submitBtn.textContent = "Sign In";
+                mcGroup.classList.add('hidden');
+                switchPrompt.textContent = "Don't have an account?";
+                switchBtn.textContent = "Register Here";
+            } else {
+                title.textContent = "Create Account";
+                subtitle.textContent = "Join the SurvivalInKaif community";
+                submitBtn.textContent = "Register Account";
+                mcGroup.classList.remove('hidden');
+                switchPrompt.textContent = "Already registered?";
+                switchBtn.textContent = "Sign In Here";
+            }
+        }
+
+        // Authentication Submission Handler
+        window.handleAuthSubmit = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            const mcName = document.getElementById('auth-mc-name').value || 'Player';
+            const errorDiv = document.getElementById('auth-error-msg');
+
+            errorDiv.classList.add('hidden');
+
+            try {
+                if (isAuthLoginMode) {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    window.showToast("Logged in successfully!", "success");
+                } else {
+                    const res = await createUserWithEmailAndPassword(auth, email, password);
+                    // Initialize User Profile Document in Firestore (RULE 1)
+                    const defaultAvatar = `https://crafatar.com/avatars/${res.user.uid}?overlay=true&default=MHO`;
+                    const userRef = doc(db, 'artifacts', appId, 'users', res.user.uid, 'profile', 'user_info');
+                    
+                    await setDoc(userRef, {
+                        uid: res.user.uid,
+                        mcName: mcName,
+                        avatarUrl: defaultAvatar,
+                        bannerUrl: '',
+                        bio: 'Surviving in Kaif!',
+                        createdAt: serverTimestamp()
+                    });
+
+                    window.showToast("Account registered! Welcome to Kaif!", "success");
+                }
+                closeAuthModal();
+            } catch (err) {
+                errorDiv.textContent = err.message.replace('Firebase:', '');
+                errorDiv.classList.remove('hidden');
+            }
+        };
+
+        window.logout = function() {
+            signOut(auth);
+            window.showToast("Logged out successfully.", "info");
+        };
+
+        // Fetch User Profile from Firestore
+        async function loadUserProfile(uid) {
+            try {
+                const userRef = doc(db, 'artifacts', appId, 'users', uid, 'profile', 'user_info');
+                const snap = await getDoc(userRef);
+                if (snap.exists()) {
+                    userProfileData = snap.data();
+                } else {
+                    userProfileData = {
+                        uid: uid,
+                        mcName: 'Player',
+                        avatarUrl: `https://crafatar.com/avatars/${uid}?overlay=true&default=MHO`,
+                        bannerUrl: '',
+                        bio: 'Surviving in Kaif!'
+                    };
+                }
+                updateUserProfileUI();
+            } catch (err) {
+                console.error("Error loading user profile:", err);
+            }
+        }
+
+        // Update Profile Elements on Screen
+        function updateUserProfileUI() {
+            if (!userProfileData) return;
+
+            // Nav Badge
+            document.getElementById('nav-user-name').textContent = userProfileData.mcName || 'Player';
+            document.getElementById('nav-user-mc').textContent = `@${userProfileData.mcName || 'steve'}`;
+            document.getElementById('nav-user-avatar').src = userProfileData.avatarUrl;
+            document.getElementById('creator-user-avatar').src = userProfileData.avatarUrl;
+
+            // Profile Edit Form Fields
+            document.getElementById('prof-mc-input').value = userProfileData.mcName || '';
+            document.getElementById('prof-avatar-url').value = userProfileData.avatarUrl || '';
+            document.getElementById('prof-banner-url').value = userProfileData.bannerUrl || '';
+            document.getElementById('prof-bio-input').value = userProfileData.bio || '';
+
+            // Profile Card Preview
+            document.getElementById('profile-display-name').textContent = userProfileData.mcName || 'Player';
+            document.getElementById('profile-mc-name').textContent = `@${userProfileData.mcName || 'steve'}`;
+            document.getElementById('profile-avatar-preview').src = userProfileData.avatarUrl;
+
+            if (userProfileData.bannerUrl) {
+                document.getElementById('profile-banner-preview').style.backgroundImage = `url('${userProfileData.bannerUrl}')`;
+            } else {
+                document.getElementById('profile-banner-preview').style.backgroundImage = 'none';
+            }
+        }
+
+        // Fetch Crafatar 3D head automatically
+        window.fetchMinecraftAvatar = function() {
+            const mcNick = document.getElementById('prof-mc-input').value.trim();
+            if (!mcNick) {
+                window.showToast("Please enter a Minecraft username first!", "error");
+                return;
+            }
+            const skinUrl = `https://crafatar.com/avatars/${mcNick}?overlay=true`;
+            document.getElementById('prof-avatar-url').value = skinUrl;
+            document.getElementById('profile-avatar-preview').src = skinUrl;
+            window.showToast(`Fetched skin head for ${mcNick}!`, "success");
+        };
+
+        // Save Profile to Firestore
+        window.saveUserProfile = async function(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            const mcName = document.getElementById('prof-mc-input').value.trim();
+            const avatarUrl = document.getElementById('prof-avatar-url').value.trim() || `https://crafatar.com/avatars/${mcName}?overlay=true`;
+            const bannerUrl = document.getElementById('prof-banner-url').value.trim();
+            const bio = document.getElementById('prof-bio-input').value.trim();
+
+            try {
+                const userRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'user_info');
+                const updatedData = {
+                    uid: currentUser.uid,
+                    mcName,
+                    avatarUrl,
+                    bannerUrl,
+                    bio,
+                    updatedAt: serverTimestamp()
+                };
+
+                await setDoc(userRef, updatedData, { merge: true });
+                userProfileData = updatedData;
+                updateUserProfileUI();
+                window.showToast("Profile updated successfully!", "success");
+            } catch (err) {
+                window.showToast("Error updating profile: " + err.message, "error");
+            }
+        };
+
+        // Publish Community Feed Post
+        window.publishPost = async function() {
+            if (!currentUser) {
+                window.showToast("You must be logged in to post!", "error");
+                return;
+            }
+
+            const text = document.getElementById('post-text-input').value.trim();
+            const imageUrl = document.getElementById('post-image-url').value.trim();
+            const ytUrl = document.getElementById('post-yt-url').value.trim();
+
+            if (!text && !imageUrl && !ytUrl) {
+                window.showToast("Post content cannot be empty!", "error");
+                return;
+            }
+
+            try {
+                // Public collection rule (RULE 1)
+                const postsCol = collection(db, 'artifacts', appId, 'public', 'data', 'posts');
+                await addDoc(postsCol, {
+                    authorUid: currentUser.uid,
+                    authorName: userProfileData?.mcName || 'Player',
+                    authorAvatar: userProfileData?.avatarUrl || 'https://crafatar.com/avatars/steve',
+                    text: text,
+                    imageUrl: imageUrl,
+                    ytUrl: ytUrl,
+                    likes: [],
+                    createdAt: new Date().toISOString()
+                });
+
+                document.getElementById('post-text-input').value = '';
+                document.getElementById('post-image-url').value = '';
+                document.getElementById('post-yt-url').value = '';
+
+                window.showToast("Published post to feed!", "success");
+            } catch (err) {
+                window.showToast("Failed to publish post: " + err.message, "error");
+            }
+        };
+
+        // Like/Unlike Post
+        window.toggleLikePost = async function(postId, likesArr = []) {
+            if (!currentUser) {
+                window.showToast("Please login to like posts!", "error");
+                openAuthModal('login');
+                return;
+            }
+
+            const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'posts', postId);
+            const hasLiked = likesArr.includes(currentUser.uid);
+
+            try {
+                if (hasLiked) {
+                    await updateDoc(postRef, { likes: arrayRemove(currentUser.uid) });
+                } else {
+                    await updateDoc(postRef, { likes: arrayUnion(currentUser.uid) });
+                }
+            } catch (err) {
+                console.error("Like toggle error:", err);
+            }
+        };
+
+        // Delete Post
+        window.deletePost = async function(postId) {
+            if (!currentUser) return;
+            try {
+                const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'posts', postId);
+                await deleteDoc(postRef);
+                window.showToast("Post deleted.", "info");
+            } catch (err) {
+                window.showToast("Could not delete post.", "error");
+            }
+        };
+
+        // Format YouTube Embeds
+        function getYouTubeEmbedUrl(url) {
+            if (!url) return null;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null;
+        }
+
+        // Realtime Posts Listener (RULE 2: Simple query without compound ordering)
+        function subscribePostsFeed() {
+            const postsCol = collection(db, 'artifacts', appId, 'public', 'data', 'posts');
+            
+            onSnapshot(postsCol, (snapshot) => {
+                const postsContainer = document.getElementById('posts-container');
+                let posts = [];
+
+                snapshot.forEach((docSnap) => {
+                    posts.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                // Sort posts in JS memory by timestamp desc
+                posts.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+                if (posts.length === 0) {
+                    postsContainer.innerHTML = `
+                        <div class="glass-panel rounded-2xl p-8 text-center space-y-2">
+                            <i class="fa-solid fa-comments text-slate-600 text-3xl mb-1"></i>
+                            <p class="text-sm text-slate-300 font-bold">No posts yet!</p>
+                            <p class="text-xs text-slate-500">Be the first player to post something in SurvivalInKaif!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                postsContainer.innerHTML = posts.map(post => {
+                    const likes = post.likes || [];
+                    const isLiked = currentUser && likes.includes(currentUser.uid);
+                    const isOwner = currentUser && currentUser.uid === post.authorUid;
+                    const ytEmbed = getYouTubeEmbedUrl(post.ytUrl);
+
+                    return `
+                        <div class="glass-panel rounded-2xl p-5 space-y-4 border border-slate-800 hover:border-slate-700 transition">
+                            <!-- Post Header -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <img src="${post.authorAvatar || 'https://crafatar.com/avatars/steve'}" class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800" alt="Avatar">
+                                    <div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-sm font-bold text-white">${post.authorName || 'Player'}</span>
+                                            <span class="text-[10px] px-2 py-0.5 rounded bg-kaif-500/10 text-kaif-400 font-mono">Survivor</span>
+                                        </div>
+                                        <span class="text-[10px] text-slate-500">${post.createdAt ? new Date(post.createdAt).toLocaleString() : 'Just now'}</span>
+                                    </div>
+                                </div>
+                                ${isOwner ? `
+                                    <button onclick="deletePost('${post.id}')" title="Delete Post" class="text-slate-500 hover:text-red-400 text-xs p-2 transition">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+
+                            <!-- Post Text -->
+                            ${post.text ? `<p class="text-sm text-slate-200 leading-relaxed whitespace-pre-line">${post.text}</p>` : ''}
+
+                            <!-- Optional Image -->
+                            ${post.imageUrl ? `
+                                <div class="rounded-xl overflow-hidden border border-slate-800 bg-slate-950">
+                                    <img src="${post.imageUrl}" class="w-full max-h-96 object-cover" onerror="this.style.display='none'">
+                                </div>
+                            ` : ''}
+
+                            <!-- Optional YouTube Video -->
+                            ${ytEmbed ? `
+                                <div class="aspect-video w-full rounded-xl overflow-hidden border border-slate-800">
+                                    <iframe class="w-full h-full" src="${ytEmbed}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                </div>
+                            ` : ''}
+
+                            <!-- Post Actions -->
+                            <div class="flex items-center space-x-4 border-t border-slate-800/60 pt-3">
+                                <button onclick="toggleLikePost('${post.id}', ${JSON.stringify(likes).replace(/"/g, '&quot;')})" class="flex items-center space-x-2 text-xs font-semibold ${isLiked ? 'text-red-400' : 'text-slate-400 hover:text-white'} transition">
+                                    <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart text-base ${isLiked ? 'text-red-500 animate-bounce' : ''}"></i>
+                                    <span>${likes.length} ${likes.length === 1 ? 'Like' : 'Likes'}</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }, (err) => {
+                console.error("Firestore error on posts feed:", err);
+            });
+        }
+
+        // Firebase Auth State Listener
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+
+            const guestControls = document.getElementById('auth-guest-controls');
+            const userControls = document.getElementById('auth-user-controls');
+            const creatorLockedOverlay = document.getElementById('creator-locked-overlay');
+            const profileUnauth = document.getElementById('profile-unauth-notice');
+            const profileEdit = document.getElementById('profile-edit-card');
+
+            if (user) {
+                // Logged In State
+                guestControls.classList.add('hidden');
+                userControls.classList.remove('hidden');
+                creatorLockedOverlay.classList.add('hidden');
+                profileUnauth.classList.add('hidden');
+                profileEdit.classList.remove('hidden');
+
+                updateIPBoxUI(true);
+                await loadUserProfile(user.uid);
+            } else {
+                // Guest State
+                guestControls.classList.remove('hidden');
+                userControls.classList.add('hidden');
+                creatorLockedOverlay.classList.remove('hidden');
+                profileUnauth.classList.remove('hidden');
+                profileEdit.classList.add('hidden');
+
+                userProfileData = null;
+                updateIPBoxUI(false);
+            }
+
+            // Always subscribe to real-time posts feed
+            subscribePostsFeed();
+        });
+    </script>
 </body>
 </html>

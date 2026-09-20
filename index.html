@@ -1,586 +1,501 @@
 <!DOCTYPE html>
-<html lang="ru" class="dark">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SurvivalInKaif — Официальный сайт сервера Minecraft</title>
+    <title>SurvivalInKaif — Сообщество и Сервер Minecraft</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Inter & Press Start 2P for Minecraft Vibe -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        mc: {
-                            green: '#22c55e',
-                            greenDark: '#15803d',
-                            bg: '#0f172a',
-                            card: '#1e293b',
-                            border: '#334155',
-                            gold: '#fbbf24',
-                            red: '#ef4444'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        pixel: ['"Press Start 2P"', 'cursive']
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         body {
-            background-color: #0b0f19;
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(34, 197, 94, 0.08) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.8) 0px, transparent 50%);
-            background-attachment: fixed;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', Roboto, sans-serif;
         }
-
-        .minecraft-btn {
-            box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.35), inset 4px 4px 0px 0px rgba(255,255,255,0.2);
-            transition: all 0.1s ease;
-        }
-        .minecraft-btn:active {
-            box-shadow: inset 2px 2px 0px 0px rgba(0,0,0,0.35);
-            transform: translateY(2px);
-        }
-
-        .pulse-online {
-            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
-            animation: pulse-green 2s infinite;
-        }
-        @keyframes pulse-green {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f172a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #22c55e;
-        }
+        .bg-card { background-color: #1e293b; }
+        .bg-card-hover:hover { background-color: #334155; }
+        .text-accent { color: #22c55e; }
+        .bg-accent { background-color: #22c55e; }
+        .bg-accent:hover { background-color: #16a34a; }
+        .border-accent { border-color: #22c55e; }
     </style>
 </head>
-<body class="text-slate-100 min-h-screen flex flex-col font-sans selection:bg-mc-green selection:text-black">
+<body class="min-h-screen flex flex-col">
 
-    <nav class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40">
-        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-mc-green/20 border border-mc-green/50 rounded-lg flex items-center justify-center text-mc-green text-xl font-bold font-pixel shadow-lg shadow-mc-green/10">
-                    S
-                </div>
-                <div>
-                    <h1 class="font-bold text-lg leading-tight tracking-wide text-white">SurvivalInKaif</h1>
-                    <p class="text-xs text-slate-400">Aternos Minecraft Server</p>
-                </div>
+    <!-- Навигация -->
+    <nav class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('feed')">
+                <div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center text-slate-950 font-black text-xl">S</div>
+                <span class="font-extrabold text-xl tracking-wider text-white">Survival<span class="text-accent">InKaif</span></span>
             </div>
-
-            <div class="flex items-center gap-3">
-                <!-- Status Badge -->
-                <div class="hidden sm:flex items-center gap-2 bg-slate-800/80 border border-slate-700/60 rounded-full px-3 py-1.5 text-xs font-medium">
-                    <span class="w-2.5 h-2.5 rounded-full bg-mc-green pulse-online"></span>
-                    <span class="text-slate-300">Aternos Online</span>
-                </div>
-
-                <!-- Admin Status Indicator if logged in -->
-                <div id="adminBadge" class="hidden items-center gap-2 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-full px-3 py-1 text-xs font-medium">
-                    <i class="fa-solid fa-user-shield"></i>
-                    <span>Администратор</span>
-                    <button onclick="logoutAdmin()" class="ml-1 text-slate-400 hover:text-white" title="Выйтииз админки">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
+            
+            <div class="flex items-center gap-3" id="navAuthSection">
+                <!-- Заполняется динамически JS -->
             </div>
         </div>
     </nav>
 
-    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8 flex flex-col gap-8">
+    <!-- Основной контент -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <!-- Hero Banner -->
-        <section class="relative bg-gradient-to-b from-slate-800/80 to-slate-900/90 border border-slate-700/60 rounded-2xl p-6 sm:p-10 text-center shadow-2xl overflow-hidden">
-            <!-- Decorative Glow -->
-            <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-mc-green/10 rounded-full blur-3xl pointer-events-none"></div>
-
-            <span class="inline-block px-3 py-1 bg-mc-green/10 text-mc-green border border-mc-green/30 text-xs font-bold uppercase tracking-wider rounded-full mb-3">
-                Версия: PaperMC 1.20+
-            </span>
-            <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-3 font-pixel leading-tight">
-                SURVIVAL<span class="text-mc-green">IN</span>KAIF
-            </h2>
-            <p class="text-slate-400 max-w-lg mx-auto text-sm sm:text-base mb-6">
-                Выживание с друзьями в кайф! Скопируй IP ниже, запускай сервер и подключайся к нам прямо сейчас.
-            </p>
-
-            <!-- IP Copy Widget -->
-            <div class="max-w-md mx-auto bg-slate-950/80 border border-slate-700/80 rounded-xl p-2.5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-inner">
-                <div class="flex items-center gap-3 px-3 py-1">
-                    <i class="fa-solid fa-server text-mc-green text-lg"></i>
-                    <div class="text-left">
-                        <div class="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Адрес сервера</div>
-                        <div id="serverIpText" class="font-mono text-sm sm:text-base font-bold text-slate-100 select-all">SurvivalInKaif.aternos.me:50723</div>
-                    </div>
-                </div>
-
-                <button id="copyBtn" onclick="copyServerIp()" class="w-full sm:w-auto minecraft-btn bg-mc-green hover:bg-mc-greenDark text-slate-950 font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all">
-                    <i class="fa-solid fa-copy"></i>
-                    <span id="copyBtnText">Скопировать IP</span>
-                </button>
-            </div>
+        <!-- Левая колонка: Профиль и Сервер -->
+        <div class="space-y-6">
             
-            <!-- Online status mobile display -->
-            <div class="flex sm:hidden items-center justify-center gap-2 mt-4 text-xs text-slate-400">
-                <span class="w-2 h-2 rounded-full bg-mc-green"></span>
-                <span>Aternos Server Host</span>
-            </div>
-        </section>
-
-        <section class="flex flex-col gap-5">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-newspaper text-mc-green text-xl"></i>
-                    <h3 class="text-xl font-bold tracking-wide">Новости и Ивенты</h3>
+            <!-- Карточка Сервера -->
+            <div class="bg-card p-5 rounded-2xl border border-slate-800 shadow-lg text-center">
+                <div class="inline-flex items-center gap-2 bg-slate-900 px-3 py-1 rounded-full text-xs font-semibold text-accent mb-3 border border-emerald-500/20">
+                    <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+                    PaperMC 1.20+
                 </div>
-
-                <!-- Filter Category Tabs -->
-                <div class="flex gap-1 bg-slate-900/80 p-1 border border-slate-800 rounded-lg text-xs">
-                    <button onclick="filterCategory('all')" id="tab-all" class="filter-tab px-3 py-1 rounded-md font-medium text-white bg-slate-800 transition">Все</button>
-                    <button onclick="filterCategory('Новость')" id="tab-news" class="filter-tab px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white transition">Новости</button>
-                    <button onclick="filterCategory('Ивент')" id="tab-event" class="filter-tab px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white transition">Ивенты</button>
-                    <button onclick="filterCategory('Тех. работы')" id="tab-tech" class="filter-tab px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white transition">Тех. работы</button>
-                </div>
-            </div>
-
-            <div id="postsList" class="space-y-4">
-                <!-- Skeleton Loading -->
-                <div class="animate-pulse bg-slate-800/40 border border-slate-800 rounded-xl p-5 space-y-3">
-                    <div class="h-4 bg-slate-700/50 rounded w-1/4"></div>
-                    <div class="h-6 bg-slate-700/50 rounded w-3/4"></div>
-                    <div class="h-16 bg-slate-700/30 rounded w-full"></div>
-                </div>
-            </div>
-        </section>
-
-        <section id="adminPanelSection" class="hidden border border-amber-500/30 bg-slate-900/90 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-2xl pointer-events-none"></div>
-
-            <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-5">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
-                        <i class="fa-solid fa-crown"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-lg text-white">Панель управления создателя</h3>
-                        <p class="text-xs text-amber-400/80">Доступно только владельцу сервера</p>
-                    </div>
-                </div>
-                <button onclick="logoutAdmin()" class="text-xs text-slate-400 hover:text-red-400 flex items-center gap-1 transition">
-                    <i class="fa-solid fa-lock"></i>
-                    <span>Выйти</span>
-                </button>
-            </div>
-
-            <!-- Create Post Form -->
-            <form id="createPostForm" onsubmit="handleCreatePost(event)" class="space-y-4">
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div class="sm:col-span-2">
-                        <label class="block text-xs font-semibold text-slate-400 mb-1">Заголовок объявления</label>
-                        <input type="text" id="postTitle" required placeholder="Например: ПВП Ивент в эту субботу!" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-mc-green transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 mb-1">Категория</label>
-                        <select id="postCategory" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-mc-green transition">
-                            <option value="Новость">📢 Новость</option>
-                            <option value="Ивент">⚔️ Ивент</option>
-                            <option value="Тех. работы">🛠️ Тех. работы</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Содержание поста</label>
-                    <textarea id="postContent" rows="4" required placeholder="Подробно опишите новости, правила ивента или время проведения..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-mc-green transition resize-y"></textarea>
-                </div>
-
-                <div class="flex justify-end">
-                    <button type="submit" id="submitPostBtn" class="minecraft-btn bg-mc-green hover:bg-mc-greenDark text-slate-950 font-bold px-6 py-2.5 rounded-lg text-sm flex items-center gap-2 transition">
-                        <i class="fa-solid fa-paper-plane"></i>
-                        <span>Опубликовать для всех</span>
+                <h2 class="text-xl font-bold mb-1">Minecraft Сервер</h2>
+                <p class="text-xs text-slate-400 mb-4">Подключайся и играй вместе с друзьями!</p>
+                
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 flex items-center justify-between gap-2 mb-3">
+                    <span id="serverIpText" class="font-mono text-sm font-bold text-slate-200 select-all">SurvivalInKaif.aternos.me:50723</span>
+                    <button onclick="copyServerIp()" class="bg-accent text-slate-950 px-3 py-1.5 rounded-lg text-xs font-bold transition-all active:scale-95 flex items-center gap-1 shrink-0">
+                        <i class="fa-regular fa-copy"></i> Скопировать
                     </button>
                 </div>
-            </form>
-        </section>
+            </div>
+
+            <!-- Виджет Профиля (если вошел) -->
+            <div id="sidebarProfile" class="hidden bg-card p-5 rounded-2xl border border-slate-800 shadow-lg text-center">
+                <img id="sidebarAvatar" src="https://crafatar.com/renders/head/steve?overlay" class="w-20 h-20 mx-auto mb-3 rounded-xl shadow-md border-2 border-accent" alt="Skin">
+                <h3 id="sidebarMcNick" class="font-bold text-lg text-white">...</h3>
+                <p id="sidebarEmail" class="text-xs text-slate-400 mb-4">...</p>
+                <button onclick="switchTab('profile')" class="w-full bg-slate-800 hover:bg-slate-700 text-xs font-semibold py-2 rounded-xl transition">
+                    Мой Профиль и Посты
+                </button>
+            </div>
+
+            <!-- Панель Администратора (Владельца) -->
+            <div class="bg-card p-5 rounded-2xl border border-slate-800 shadow-lg">
+                <button onclick="toggleAdminForm()" class="w-full text-left font-bold text-sm text-slate-400 hover:text-accent flex justify-between items-center">
+                    <span><i class="fa-solid fa-user-shield mr-2"></i>Панель Владельца</span>
+                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                </button>
+                
+                <form id="adminPostForm" class="hidden mt-4 space-y-3 pt-3 border-t border-slate-800" onsubmit="handleAdminPostSubmit(event)">
+                    <input type="password" id="adminPassInput" placeholder="Пароль Админа (1234)" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
+                    <input type="text" id="adminTitle" placeholder="Заголовок новости/ивента" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
+                    <select id="adminCategory" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
+                        <option value="Новость">Объявление / Новость</option>
+                        <option value="Ивент">Ивент / Мероприятие</option>
+                        <option value="Обновление">Обновление сервера</option>
+                    </select>
+                    <textarea id="adminContent" rows="3" placeholder="Текст объявления..." required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-accent"></textarea>
+                    <button type="submit" class="w-full bg-accent text-slate-950 font-bold py-2 rounded-xl text-xs hover:opacity-90 transition">Опубликовать от Админа</button>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- Центральная колонка: Лента / Посты -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- Вкладки -->
+            <div class="flex gap-2 border-b border-slate-800 pb-2">
+                <button id="tabFeedBtn" onclick="switchTab('feed')" class="px-4 py-2 font-bold text-sm rounded-xl bg-accent text-slate-950">Лента Игроков</button>
+                <button id="tabNewsBtn" onclick="switchTab('news')" class="px-4 py-2 font-bold text-sm rounded-xl text-slate-400 hover:bg-slate-800">Новости и Ивенты</button>
+            </div>
+
+            <!-- Форма создания поста игрока (видны только авторизованным) -->
+            <div id="createPostBox" class="hidden bg-card p-4 rounded-2xl border border-slate-800 shadow-lg">
+                <div class="flex items-start gap-3">
+                    <img id="createPostAvatar" src="https://crafatar.com/renders/head/steve?overlay" class="w-10 h-10 rounded-lg shrink-0">
+                    <div class="flex-1 space-y-3">
+                        <textarea id="postText" rows="2" placeholder="Поделись скриншотом, видео или новостью..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-accent resize-none"></textarea>
+                        
+                        <div class="flex flex-wrap gap-2">
+                            <input type="url" id="postMediaUrl" placeholder="Ссылка на скриншот (Imgur/Yapx) или видео (YouTube)" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-accent">
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button onclick="publishUserPost()" class="bg-accent text-slate-950 font-bold px-5 py-2 rounded-xl text-xs hover:opacity-90 transition">
+                                Опубликовать
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Контейнер для постов ленты -->
+            <div id="postsFeedContainer" class="space-y-4">
+                <div class="text-center py-10 text-slate-500">Загрузка постов...</div>
+            </div>
+
+            <!-- Контейнер для новостей админа -->
+            <div id="adminNewsContainer" class="hidden space-y-4">
+                <div class="text-center py-10 text-slate-500">Загрузка новостей...</div>
+            </div>
+
+        </div>
 
     </main>
 
-    <footer class="mt-auto border-t border-slate-800/80 bg-slate-950/60 py-6 text-center text-xs text-slate-500">
-        <div class="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div>
-                © 2026 SurvivalInKaif Server. Все права защищены.
-            </div>
+    <!-- Модальное окно Входа / Регистрации -->
+    <div id="authModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-card border border-slate-800 w-full max-w-md p-6 rounded-2xl shadow-2xl relative">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             
-            <div class="flex items-center gap-4">
-                <!-- Secret Admin Login Trigger Button -->
-                <button onclick="openAdminModal()" class="text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5" title="Вход для владельца">
-                    <i class="fa-solid fa-user-lock text-xs"></i>
-                    <span>Админ-вход</span>
-                </button>
+            <div class="flex gap-4 mb-6 border-b border-slate-800 pb-2">
+                <button id="modalTabLogin" onclick="switchAuthMode('login')" class="font-bold text-lg text-accent border-b-2 border-accent pb-1">Вход</button>
+                <button id="modalTabRegister" onclick="switchAuthMode('register')" class="font-bold text-lg text-slate-400 pb-1">Регистрация</button>
             </div>
-        </div>
-    </footer>
 
-    <div id="adminAuthModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-700/80 rounded-2xl max-w-sm w-full p-6 shadow-2xl relative animate-in fade-in zoom-in duration-200">
-            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-
-            <div class="text-center mb-5">
-                <div class="w-12 h-12 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-xl mx-auto flex items-center justify-center text-xl mb-3">
-                    <i class="fa-solid fa-key"></i>
+            <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div id="mcNickGroup" class="hidden">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Игровой ник в Minecraft</label>
+                    <input type="text" id="authMcNick" placeholder="например: Stev1k" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-accent">
                 </div>
-                <h3 class="text-lg font-bold text-white">Вход для владельца</h3>
-                <p class="text-xs text-slate-400 mt-1">Введите пароль администратора для управления новостями</p>
-            </div>
-
-            <form onsubmit="handleAdminAuth(event)" class="space-y-4">
                 <div>
-                    <input type="password" id="adminPasswordInput" placeholder="Пароль администратора" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 transition text-center tracking-widest">
-                    <p id="authErrorMsg" class="text-red-400 text-xs text-center mt-2 hidden">Неверный пароль!</p>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Email адрес</label>
+                    <input type="email" id="authEmail" required placeholder="your@email.com" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-accent">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Пароль</label>
+                    <input type="password" id="authPassword" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-accent">
                 </div>
 
-                <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-lg text-sm transition">
-                    Войти в систему
+                <p id="authError" class="text-red-400 text-xs hidden"></p>
+
+                <button type="submit" id="authSubmitBtn" class="w-full bg-accent text-slate-950 font-bold py-3 rounded-xl text-sm hover:opacity-90 transition mt-2">
+                    Войти
                 </button>
             </form>
-            <p class="text-[10px] text-center text-slate-500 mt-4">Стандартный пароль: <code class="text-slate-400">1234</code></p>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <!-- Уведомления (Toast) -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-accent text-slate-950 px-4 py-2.5 rounded-xl font-bold text-xs shadow-xl hidden transition-all z-50">
+        Уведомление
+    </div>
 
-        // Firebase Configuration & Setup
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'survivalinkaif-server-app';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-            ? JSON.parse(__firebase_config) 
-            : {
-                apiKey: "demo-api-key",
-                authDomain: "demo.firebaseapp.com",
-                projectId: "demo-project",
-                storageBucket: "demo.appspot.com",
-                messagingSenderId: "123456789",
-                appId: "1:123456789:web:123456"
-            };
+    <!-- Firebase SDK v9 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+        // Твои конфиги из Firebase Console
+        const firebaseConfig = {
+            apiKey: "AIzaSyDvi1_IgnU7D6-ZG1r7ULxTJ2Ip7ucNPHo",
+            authDomain: "survivalinkaif.firebaseapp.com",
+            projectId: "survivalinkaif",
+            storageBucket: "survivalinkaif.firebasestorage.app",
+            messagingSenderId: "1031638928660",
+            appId: "1:1031638928660:web:86178899754cabfa590601",
+            measurementId: "G-ZJ7CJQQQGJ"
+        };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // State Variables
         let currentUser = null;
-        let allPosts = [];
-        let currentFilter = 'all';
-        let isAdminLoggedIn = false;
+        let authMode = 'login';
+        let activeTab = 'feed';
 
-        // Default initial posts if database is empty
-        const defaultPosts = [
-            {
-                id: 'default-1',
-                title: 'Добро пожаловать на SurvivalInKaif!',
-                category: 'Новость',
-                content: 'Сервер успешно запущен на базе PaperMC! Собирайте друзей, копируйте IP выше и приступайте к выживанию.',
-                createdAt: new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
-            },
-            {
-                id: 'default-2',
-                title: 'Первый турнир по ПВП в Ближайшее время',
-                category: 'Ивент',
-                content: 'Готовьте свою алмазную броню! Скоро мы проведем первый турнир на спавне с крутыми призами.',
-                createdAt: new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
-            }
-        ];
-
-        async function initAuth() {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    const userCredential = await signInWithCustomToken(auth, __initial_auth_token);
-                    currentUser = userCredential.user;
-                } else {
-                    const userCredential = await signInAnonymously(auth);
-                    currentUser = userCredential.user;
-                }
-                listenToPosts();
-            } catch (error) {
-                console.error("Auth error:", error);
-                // Fallback to local rendering
-                renderPosts(defaultPosts);
-            }
-        }
-
-        // Listen for realtime posts from Cloud Firestore
-        function listenToPosts() {
-            if (!currentUser) return;
-
-            const postsRef = collection(db, 'artifacts', appId, 'public', 'data', 'posts');
-
-            onSnapshot(postsRef, (snapshot) => {
-                if (snapshot.empty) {
-                    allPosts = defaultPosts;
-                } else {
-                    allPosts = snapshot.docs.map(doc => ({
-                        id: doc.id,
-                        ...doc.data()
-                    }));
-                }
-                renderPosts(allPosts);
-            }, (error) => {
-                console.warn("Firestore error, falling back to cached posts:", error);
-                renderPosts(defaultPosts);
-            });
-        }
-
-        window.renderPosts = function(postsToRender) {
-            const container = document.getElementById('postsList');
-            container.innerHTML = '';
-
-            let filtered = postsToRender;
-            if (currentFilter !== 'all') {
-                filtered = postsToRender.filter(p => p.category === currentFilter);
-            }
-
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-12 bg-slate-900/40 border border-slate-800 rounded-xl">
-                        <i class="fa-solid fa-folder-open text-slate-600 text-3xl mb-2"></i>
-                        <p class="text-slate-400 text-sm">В этой категории пока нет записей</p>
-                    </div>
-                `;
-                return;
-            }
-
-            filtered.forEach(post => {
-                const categoryBadge = getCategoryBadgeHTML(post.category);
-                const isOwner = isAdminLoggedIn;
-
-                const cardHtml = `
-                    <article class="bg-slate-900/80 border border-slate-800 hover:border-slate-700/80 rounded-xl p-5 transition-all duration-200 relative group">
-                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                            <div class="flex items-center gap-2">
-                                ${categoryBadge}
-                                <span class="text-xs text-slate-500"><i class="fa-regular fa-clock mr-1"></i>${post.createdAt || 'Только что'}</span>
-                            </div>
-
-                            ${isOwner ? `
-                                <button onclick="deletePost('${post.id}')" class="text-xs text-slate-500 hover:text-red-400 p-1.5 rounded-md hover:bg-red-500/10 transition" title="Удалить новость">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            ` : ''}
-                        </div>
-
-                        <h4 class="text-lg font-bold text-slate-100 mb-2 leading-snug">${escapeHtml(post.title)}</h4>
-                        <p class="text-slate-300 text-sm leading-relaxed whitespace-pre-line">${escapeHtml(post.content)}</p>
-                    </article>
-                `;
-                container.innerHTML += cardHtml;
-            });
-        };
-
-        function getCategoryBadgeHTML(category) {
-            switch (category) {
-                case 'Ивент':
-                    return `<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-400"><i class="fa-solid fa-trophy mr-1"></i>Ивент</span>`;
-                case 'Тех. работы':
-                    return `<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-500/10 border border-red-500/30 text-red-400"><i class="fa-solid fa-wrench mr-1"></i>Тех. работы</span>`;
-                default:
-                    return `<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-mc-green/10 border border-mc-green/30 text-mc-green"><i class="fa-solid fa-bullhorn mr-1"></i>Новость</span>`;
-            }
-        }
-
-        // Helper to escape HTML to prevent XSS
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-
-        window.filterCategory = function(cat) {
-            currentFilter = cat;
-            document.querySelectorAll('.filter-tab').forEach(tab => {
-                tab.classList.remove('bg-slate-800', 'text-white');
-                tab.classList.add('text-slate-400');
-            });
-            
-            const activeMap = {
-                'all': 'tab-all',
-                'Новость': 'tab-news',
-                'Ивент': 'tab-event',
-                'Тех. работы': 'tab-tech'
-            };
-            const activeTab = document.getElementById(activeMap[cat]);
-            if (activeTab) {
-                activeTab.classList.add('bg-slate-800', 'text-white');
-                activeTab.classList.remove('text-slate-400');
-            }
-
-            renderPosts(allPosts);
-        };
-
-        window.handleCreatePost = async function(e) {
-            e.preventDefault();
-            const titleInput = document.getElementById('postTitle');
-            const categorySelect = document.getElementById('postCategory');
-            const contentInput = document.getElementById('postContent');
-            const submitBtn = document.getElementById('submitPostBtn');
-
-            const title = titleInput.value.trim();
-            const category = categorySelect.value;
-            const content = contentInput.value.trim();
-
-            if (!title || !content) return;
-
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Публикация...`;
-
-            const newPost = {
-                title,
-                category,
-                content,
-                createdAt: new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
-            };
-
-            try {
-                if (currentUser) {
-                    const postsRef = collection(db, 'artifacts', appId, 'public', 'data', 'posts');
-                    await addDoc(postsRef, newPost);
-                } else {
-                    allPosts.unshift({ id: 'local-' + Date.now(), ...newPost });
-                    renderPosts(allPosts);
-                }
-
-                // Reset form
-                titleInput.value = '';
-                contentInput.value = '';
-            } catch (err) {
-                console.error("Failed to create post:", err);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Опубликовать для всех`;
-            }
-        };
-
-        window.deletePost = async function(postId) {
-            if (!confirm("Вы уверены, что хотите удалить эту новость?")) return;
-
-            try {
-                if (currentUser && !postId.startsWith('default-') && !postId.startsWith('local-')) {
-                    const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'posts', postId);
-                    await deleteDoc(postRef);
-                } else {
-                    allPosts = allPosts.filter(p => p.id !== postId);
-                    renderPosts(allPosts);
-                }
-            } catch (err) {
-                console.error("Failed to delete post:", err);
-            }
-        };
-
-        window.openAdminModal = function() {
-            document.getElementById('adminAuthModal').classList.remove('hidden');
-            document.getElementById('adminPasswordInput').focus();
-        };
-
-        window.closeAdminModal = function() {
-            document.getElementById('adminAuthModal').classList.add('hidden');
-            document.getElementById('authErrorMsg').classList.add('hidden');
-            document.getElementById('adminPasswordInput').value = '';
-        };
-
-        window.handleAdminAuth = function(e) {
-            e.preventDefault();
-            const pwd = document.getElementById('adminPasswordInput').value;
-            
-            // Password Check (Default password: 1234)
-            if (pwd === '1234') {
-                isAdminLoggedIn = true;
-                closeAdminModal();
-                
-                // Show Admin Panel
-                document.getElementById('adminPanelSection').classList.remove('hidden');
-                document.getElementById('adminBadge').classList.remove('hidden');
-                document.getElementById('adminBadge').classList.add('flex');
-                
-                // Re-render posts to show delete buttons
-                renderPosts(allPosts);
-
-                // Scroll to Admin Panel
-                document.getElementById('adminPanelSection').scrollIntoView({ behavior: 'smooth' });
+        // Отслеживание авторизации
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            renderNav();
+            if (user) {
+                document.getElementById('createPostBox').classList.remove('hidden');
+                document.getElementById('sidebarProfile').classList.remove('hidden');
+                document.getElementById('sidebarMcNick').innerText = user.displayName || 'Игрок';
+                document.getElementById('sidebarEmail').innerText = user.email;
+                const skinUrl = `https://crafatar.com/renders/head/${user.displayName || 'steve'}?overlay`;
+                document.getElementById('sidebarAvatar').src = skinUrl;
+                document.getElementById('createPostAvatar').src = skinUrl;
             } else {
-                document.getElementById('authErrorMsg').classList.remove('hidden');
-            }
-        };
-
-        window.logoutAdmin = function() {
-            isAdminLoggedIn = false;
-            document.getElementById('adminPanelSection').classList.add('hidden');
-            document.getElementById('adminBadge').classList.add('hidden');
-            document.getElementById('adminBadge').classList.remove('flex');
-            renderPosts(allPosts);
-        };
-
-        window.copyServerIp = function() {
-            const ip = "SurvivalInKaif.aternos.me:50723";
-            
-            // Clipboard fallback for frame context
-            const textArea = document.createElement("textarea");
-            textArea.value = ip;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-
-            const btn = document.getElementById('copyBtn');
-            const btnText = document.getElementById('copyBtnText');
-
-            btn.classList.remove('bg-mc-green', 'hover:bg-mc-greenDark');
-            btn.classList.add('bg-emerald-400');
-            btnText.innerText = "Скопировано!";
-
-            setTimeout(() => {
-                btn.classList.remove('bg-emerald-400');
-                btn.classList.add('bg-mc-green', 'hover:bg-mc-greenDark');
-                btnText.innerText = "Скопировать IP";
-            }, 2000);
-        };
-
-        // Hotkey shortcut: Ctrl + Shift + A to open admin modal
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a' || e.key === 'Ф' || e.key === 'ф')) {
-                e.preventDefault();
-                openAdminModal();
+                document.getElementById('createPostBox').classList.add('hidden');
+                document.getElementById('sidebarProfile').classList.add('hidden');
             }
         });
 
-        // Initialize on Load
-        initAuth();
+        // Навигация верхней панели
+        window.renderNav = () => {
+            const nav = document.getElementById('navAuthSection');
+            if (currentUser) {
+                nav.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <img src="https://crafatar.com/renders/head/${currentUser.displayName || 'steve'}?overlay" class="w-8 h-8 rounded-lg">
+                        <span class="text-xs font-bold text-white hidden sm:inline">${currentUser.displayName || 'Игрок'}</span>
+                        <button onclick="handleSignOut()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-semibold ml-2">Выйти</button>
+                    </div>
+                `;
+            } else {
+                nav.innerHTML = `
+                    <button onclick="openAuthModal('login')" class="text-xs font-bold text-slate-300 hover:text-white px-3 py-1.5">Вход</button>
+                    <button onclick="openAuthModal('register')" class="bg-accent text-slate-950 px-3 py-1.5 rounded-lg text-xs font-bold hover:opacity-90">Регистрация</button>
+                `;
+            }
+        };
+
+        // Авторизация / Регистрация
+        window.handleAuthSubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+            const mcNick = document.getElementById('authMcNick').value.trim();
+            const errorEl = document.getElementById('authError');
+            errorEl.classList.add('hidden');
+
+            try {
+                if (authMode === 'register') {
+                    if (!mcNick) throw new Error('Пожалуйста, укажи свой никнейм в Minecraft!');
+                    const res = await createUserWithEmailAndPassword(auth, email, password);
+                    await updateProfile(res.user, { displayName: mcNick });
+                    showToast('Успешная регистрация!');
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    showToast('С возвращением!');
+                }
+                closeAuthModal();
+            } catch (err) {
+                errorEl.innerText = err.message;
+                errorEl.classList.remove('hidden');
+            }
+        };
+
+        window.handleSignOut = () => {
+            signOut(auth);
+            showToast('Вы вышли из аккаунта');
+        };
+
+        // Публикация поста игроком
+        window.publishUserPost = async () => {
+            const text = document.getElementById('postText').value.trim();
+            const mediaUrl = document.getElementById('postMediaUrl').value.trim();
+
+            if (!text && !mediaUrl) {
+                showToast('Заполни текст или прикрепи ссылку!');
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, "posts"), {
+                    author: currentUser.displayName || "Неизвестный",
+                    authorUid: currentUser.uid,
+                    text: text,
+                    mediaUrl: mediaUrl,
+                    likes: [],
+                    createdAt: new Date().toISOString()
+                });
+
+                document.getElementById('postText').value = '';
+                document.getElementById('postMediaUrl').value = '';
+                showToast('Пост опубликован!');
+            } catch (err) {
+                showToast('Ошибка публикации!');
+                console.error(err);
+            }
+        };
+
+        // Лайки
+        window.toggleLike = async (postId, currentLikes) => {
+            if (!currentUser) {
+                openAuthModal('login');
+                return;
+            }
+            const postRef = doc(db, "posts", postId);
+            const hasLiked = currentLikes.includes(currentUser.uid);
+
+            if (hasLiked) {
+                await updateDoc(postRef, { likes: arrayRemove(currentUser.uid) });
+            } else {
+                await updateDoc(postRef, { likes: arrayUnion(currentUser.uid) });
+            }
+        };
+
+        // Удаление поста
+        window.deletePost = async (postId) => {
+            if (confirm("Удалить этот пост?")) {
+                await deleteDoc(doc(db, "posts", postId));
+                showToast("Пост удален");
+            }
+        };
+
+        // Загрузка Ленты в реальном времени
+        const qPosts = query(collection(db, "posts"));
+        onSnapshot(qPosts, (snapshot) => {
+            const container = document.getElementById('postsFeedContainer');
+            if (snapshot.empty) {
+                container.innerHTML = `<div class="text-center py-10 text-slate-500 bg-card rounded-2xl">Пока нет публикаций. Будь первым!</div>`;
+                return;
+            }
+
+            let postsArr = [];
+            snapshot.forEach(doc => postsArr.push({ id: doc.id, ...doc.data() }));
+            postsArr.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            container.innerHTML = postsArr.map(post => {
+                const isLiked = currentUser && post.likes && post.likes.includes(currentUser.uid);
+                const isOwner = currentUser && currentUser.uid === post.authorUid;
+                const dateStr = new Date(post.createdAt).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+
+                // Форматирование медиаконтента (видео или картинка)
+                let mediaHtml = '';
+                if (post.mediaUrl) {
+                    if (post.mediaUrl.includes('youtube.com') || post.mediaUrl.includes('youtu.be')) {
+                        let ytId = post.mediaUrl.split('v=')[1] || post.mediaUrl.split('/').pop();
+                        if (ytId.includes('&')) ytId = ytId.split('&')[0];
+                        mediaHtml = `<div class="mt-3 aspect-video rounded-xl overflow-hidden"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${ytId}" frameborder="0" allowfullscreen></iframe></div>`;
+                    } else {
+                        mediaHtml = `<img src="${post.mediaUrl}" class="mt-3 rounded-xl max-h-96 w-full object-cover border border-slate-800" onerror="this.style.display='none'">`;
+                    }
+                }
+
+                return `
+                    <div class="bg-card p-5 rounded-2xl border border-slate-800 shadow-lg">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <img src="https://crafatar.com/renders/head/${post.author}?overlay" class="w-9 h-9 rounded-lg">
+                                <div>
+                                    <h4 class="font-bold text-sm text-white">${post.author}</h4>
+                                    <span class="text-xs text-slate-500">${dateStr}</span>
+                                </div>
+                            </div>
+                            ${isOwner ? `<button onclick="deletePost('${post.id}')" class="text-slate-500 hover:text-red-400 text-xs"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        </div>
+                        <p class="text-sm text-slate-200 whitespace-pre-line">${post.text}</p>
+                        ${mediaHtml}
+                        <div class="mt-4 pt-3 border-t border-slate-800/60 flex items-center gap-4 text-xs">
+                            <button onclick="toggleLike('${post.id}', ${JSON.stringify(post.likes || [])})" class="flex items-center gap-1.5 font-semibold ${isLiked ? 'text-red-500' : 'text-slate-400 hover:text-slate-200'}">
+                                <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                                <span>${(post.likes || []).length}</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        });
+
+        // Админ-функции для Новостей
+        window.handleAdminPostSubmit = async (e) => {
+            e.preventDefault();
+            const pass = document.getElementById('adminPassInput').value;
+            if (pass !== '1234') {
+                showToast('Неверный пароль владельца!');
+                return;
+            }
+
+            const title = document.getElementById('adminTitle').value;
+            const category = document.getElementById('adminCategory').value;
+            const content = document.getElementById('adminContent').value;
+
+            try {
+                await addDoc(collection(db, "news"), {
+                    title, category, content,
+                    createdAt: new Date().toISOString()
+                });
+
+                document.getElementById('adminTitle').value = '';
+                document.getElementById('adminContent').value = '';
+                showToast('Новость опубликована!');
+            } catch (err) {
+                showToast('Ошибка загрузки новости');
+            }
+        };
+
+        // Загрузка новостей админа
+        const qNews = query(collection(db, "news"));
+        onSnapshot(qNews, (snapshot) => {
+            const container = document.getElementById('adminNewsContainer');
+            if (snapshot.empty) {
+                container.innerHTML = `<div class="text-center py-10 text-slate-500 bg-card rounded-2xl">Пока нет официальных новостей.</div>`;
+                return;
+            }
+
+            let newsArr = [];
+            snapshot.forEach(doc => newsArr.push({ id: doc.id, ...doc.data() }));
+            newsArr.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            container.innerHTML = newsArr.map(item => `
+                <div class="bg-card p-5 rounded-2xl border border-slate-800 shadow-lg border-l-4 border-l-accent">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20">${item.category}</span>
+                        <span class="text-xs text-slate-500">${new Date(item.createdAt).toLocaleDateString('ru-RU')}</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white mb-2">${item.title}</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">${item.content}</p>
+                </div>
+            `).join('');
+        });
+
+        // Вспомогательное UI
+        window.switchTab = (tab) => {
+            activeTab = tab;
+            const feedBtn = document.getElementById('tabFeedBtn');
+            const newsBtn = document.getElementById('tabNewsBtn');
+            const feedBox = document.getElementById('postsFeedContainer');
+            const newsBox = document.getElementById('adminNewsContainer');
+
+            if (tab === 'feed') {
+                feedBtn.className = "px-4 py-2 font-bold text-sm rounded-xl bg-accent text-slate-950";
+                newsBtn.className = "px-4 py-2 font-bold text-sm rounded-xl text-slate-400 hover:bg-slate-800";
+                feedBox.classList.remove('hidden');
+                newsBox.classList.add('hidden');
+            } else {
+                newsBtn.className = "px-4 py-2 font-bold text-sm rounded-xl bg-accent text-slate-950";
+                feedBtn.className = "px-4 py-2 font-bold text-sm rounded-xl text-slate-400 hover:bg-slate-800";
+                newsBox.classList.remove('hidden');
+                feedBox.classList.add('hidden');
+            }
+        };
+
+        window.openAuthModal = (mode) => {
+            authMode = mode;
+            switchAuthMode(mode);
+            document.getElementById('authModal').classList.remove('hidden');
+            document.getElementById('authModal').classList.add('flex');
+        };
+
+        window.closeAuthModal = () => {
+            document.getElementById('authModal').classList.add('hidden');
+            document.getElementById('authModal').classList.remove('flex');
+        };
+
+        window.switchAuthMode = (mode) => {
+            authMode = mode;
+            const nickGrp = document.getElementById('mcNickGroup');
+            const btn = document.getElementById('authSubmitBtn');
+            const tabLogin = document.getElementById('modalTabLogin');
+            const tabReg = document.getElementById('modalTabRegister');
+
+            if (mode === 'register') {
+                nickGrp.classList.remove('hidden');
+                btn.innerText = "Зарегистрироваться";
+                tabReg.className = "font-bold text-lg text-accent border-b-2 border-accent pb-1";
+                tabLogin.className = "font-bold text-lg text-slate-400 pb-1";
+            } else {
+                nickGrp.classList.add('hidden');
+                btn.innerText = "Войти";
+                tabLogin.className = "font-bold text-lg text-accent border-b-2 border-accent pb-1";
+                tabReg.className = "font-bold text-lg text-slate-400 pb-1";
+            }
+        };
+
+        window.toggleAdminForm = () => {
+            document.getElementById('adminPostForm').classList.toggle('hidden');
+        };
+
+        window.copyServerIp = () => {
+            const ip = document.getElementById('serverIpText').innerText;
+            navigator.clipboard.writeText(ip);
+            showToast('IP скопирован в буфер обмена!');
+        };
+
+        window.showToast = (msg) => {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 3000);
+        };
     </script>
 </body>
 </html>

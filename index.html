@@ -66,29 +66,6 @@
                 <img id="sidebarAvatar" src="https://crafatar.com/renders/head/steve?overlay" class="w-20 h-20 mx-auto mb-3 rounded-xl shadow-md border-2 border-accent" alt="Skin">
                 <h3 id="sidebarMcNick" class="font-bold text-lg text-white">...</h3>
                 <p id="sidebarEmail" class="text-xs text-slate-400 mb-4">...</p>
-                <button onclick="switchTab('profile')" class="w-full bg-slate-800 hover:bg-slate-700 text-xs font-semibold py-2 rounded-xl transition">
-                    Мой Профиль и Посты
-                </button>
-            </div>
-
-            <!-- Панель Администратора (Владельца) -->
-            <div class="bg-card p-5 rounded-2xl border border-slate-800 shadow-lg">
-                <button onclick="toggleAdminForm()" class="w-full text-left font-bold text-sm text-slate-400 hover:text-accent flex justify-between items-center">
-                    <span><i class="fa-solid fa-user-shield mr-2"></i>Панель Владельца</span>
-                    <i class="fa-solid fa-chevron-down text-xs"></i>
-                </button>
-                
-                <form id="adminPostForm" class="hidden mt-4 space-y-3 pt-3 border-t border-slate-800" onsubmit="handleAdminPostSubmit(event)">
-                    <input type="password" id="adminPassInput" placeholder="Пароль Админа (1234)" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
-                    <input type="text" id="adminTitle" placeholder="Заголовок новости/ивента" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
-                    <select id="adminCategory" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
-                        <option value="Новость">Объявление / Новость</option>
-                        <option value="Ивент">Ивент / Мероприятие</option>
-                        <option value="Обновление">Обновление сервера</option>
-                    </select>
-                    <textarea id="adminContent" rows="3" placeholder="Текст объявления..." required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-accent"></textarea>
-                    <button type="submit" class="w-full bg-accent text-slate-950 font-bold py-2 rounded-xl text-xs hover:opacity-90 transition">Опубликовать от Админа</button>
-                </form>
             </div>
 
         </div>
@@ -99,7 +76,6 @@
             <!-- Вкладки -->
             <div class="flex gap-2 border-b border-slate-800 pb-2">
                 <button id="tabFeedBtn" onclick="switchTab('feed')" class="px-4 py-2 font-bold text-sm rounded-xl bg-accent text-slate-950">Лента Игроков</button>
-                <button id="tabNewsBtn" onclick="switchTab('news')" class="px-4 py-2 font-bold text-sm rounded-xl text-slate-400 hover:bg-slate-800">Новости и Ивенты</button>
             </div>
 
             <!-- Форма создания поста игрока (видны только авторизованным) -->
@@ -107,10 +83,10 @@
                 <div class="flex items-start gap-3">
                     <img id="createPostAvatar" src="https://crafatar.com/renders/head/steve?overlay" class="w-10 h-10 rounded-lg shrink-0">
                     <div class="flex-1 space-y-3">
-                        <textarea id="postText" rows="2" placeholder="Поделись скриншотом, видео или новостью..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-accent resize-none"></textarea>
+                        <textarea id="postText" rows="2" placeholder="Поделись скриншотом, видео или сообщением..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-accent resize-none"></textarea>
                         
                         <div class="flex flex-wrap gap-2">
-                            <input type="url" id="postMediaUrl" placeholder="Ссылка на скриншот (Imgur/Yapx) или видео (YouTube)" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-accent">
+                            <input type="url" id="postMediaUrl" placeholder="Ссылка на скриншот или видео (YouTube)" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-accent">
                         </div>
 
                         <div class="flex justify-end">
@@ -125,11 +101,6 @@
             <!-- Контейнер для постов ленты -->
             <div id="postsFeedContainer" class="space-y-4">
                 <div class="text-center py-10 text-slate-500">Загрузка постов...</div>
-            </div>
-
-            <!-- Контейнер для новостей админа -->
-            <div id="adminNewsContainer" class="hidden space-y-4">
-                <div class="text-center py-10 text-slate-500">Загрузка новостей...</div>
             </div>
 
         </div>
@@ -178,7 +149,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, onSnapshot, doc, updateDoc, deleteDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
         // Твои конфиги из Firebase Console
         const firebaseConfig = {
@@ -197,7 +168,6 @@
 
         let currentUser = null;
         let authMode = 'login';
-        let activeTab = 'feed';
 
         // Отслеживание авторизации
         onAuthStateChanged(auth, (user) => {
@@ -338,7 +308,6 @@
                 const isOwner = currentUser && currentUser.uid === post.authorUid;
                 const dateStr = new Date(post.createdAt).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
-                // Форматирование медиаконтента (видео или картинка)
                 let mediaHtml = '';
                 if (post.mediaUrl) {
                     if (post.mediaUrl.includes('youtube.com') || post.mediaUrl.includes('youtu.be')) {
@@ -375,79 +344,7 @@
             }).join('');
         });
 
-        // Админ-функции для Новостей
-        window.handleAdminPostSubmit = async (e) => {
-            e.preventDefault();
-            const pass = document.getElementById('adminPassInput').value;
-            if (pass !== '1234') {
-                showToast('Неверный пароль владельца!');
-                return;
-            }
-
-            const title = document.getElementById('adminTitle').value;
-            const category = document.getElementById('adminCategory').value;
-            const content = document.getElementById('adminContent').value;
-
-            try {
-                await addDoc(collection(db, "news"), {
-                    title, category, content,
-                    createdAt: new Date().toISOString()
-                });
-
-                document.getElementById('adminTitle').value = '';
-                document.getElementById('adminContent').value = '';
-                showToast('Новость опубликована!');
-            } catch (err) {
-                showToast('Ошибка загрузки новости');
-            }
-        };
-
-        // Загрузка новостей админа
-        const qNews = query(collection(db, "news"));
-        onSnapshot(qNews, (snapshot) => {
-            const container = document.getElementById('adminNewsContainer');
-            if (snapshot.empty) {
-                container.innerHTML = `<div class="text-center py-10 text-slate-500 bg-card rounded-2xl">Пока нет официальных новостей.</div>`;
-                return;
-            }
-
-            let newsArr = [];
-            snapshot.forEach(doc => newsArr.push({ id: doc.id, ...doc.data() }));
-            newsArr.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-            container.innerHTML = newsArr.map(item => `
-                <div class="bg-card p-5 rounded-2xl border border-slate-800 shadow-lg border-l-4 border-l-accent">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20">${item.category}</span>
-                        <span class="text-xs text-slate-500">${new Date(item.createdAt).toLocaleDateString('ru-RU')}</span>
-                    </div>
-                    <h3 class="text-base font-bold text-white mb-2">${item.title}</h3>
-                    <p class="text-xs text-slate-300 leading-relaxed">${item.content}</p>
-                </div>
-            `).join('');
-        });
-
         // Вспомогательное UI
-        window.switchTab = (tab) => {
-            activeTab = tab;
-            const feedBtn = document.getElementById('tabFeedBtn');
-            const newsBtn = document.getElementById('tabNewsBtn');
-            const feedBox = document.getElementById('postsFeedContainer');
-            const newsBox = document.getElementById('adminNewsContainer');
-
-            if (tab === 'feed') {
-                feedBtn.className = "px-4 py-2 font-bold text-sm rounded-xl bg-accent text-slate-950";
-                newsBtn.className = "px-4 py-2 font-bold text-sm rounded-xl text-slate-400 hover:bg-slate-800";
-                feedBox.classList.remove('hidden');
-                newsBox.classList.add('hidden');
-            } else {
-                newsBtn.className = "px-4 py-2 font-bold text-sm rounded-xl bg-accent text-slate-950";
-                feedBtn.className = "px-4 py-2 font-bold text-sm rounded-xl text-slate-400 hover:bg-slate-800";
-                newsBox.classList.remove('hidden');
-                feedBox.classList.add('hidden');
-            }
-        };
-
         window.openAuthModal = (mode) => {
             authMode = mode;
             switchAuthMode(mode);
@@ -478,10 +375,6 @@
                 tabLogin.className = "font-bold text-lg text-accent border-b-2 border-accent pb-1";
                 tabReg.className = "font-bold text-lg text-slate-400 pb-1";
             }
-        };
-
-        window.toggleAdminForm = () => {
-            document.getElementById('adminPostForm').classList.toggle('hidden');
         };
 
         window.copyServerIp = () => {
